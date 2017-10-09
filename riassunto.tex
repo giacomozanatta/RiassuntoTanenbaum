@@ -1,0 +1,331 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[italian]{babel} 
+\title{Reti di Calcolatori}
+\date{AA 2017-2018}
+\author{Giacomo Zanatta}
+
+\begin{document}
+  \maketitle
+  \tableofcontents
+  \newpage
+	\section{Introduzione}
+		Una rete di calcolatori è un insieme di calcolatori o di dispositivi hardware, connessi tra loro mediante uno o più mezzi di comunicazione che hanno come scopo principale quello di condividere risorse.
+	Due dispositivi si dicono connessi quando sono in grado di scambiare informazioni.
+		\subsection{Applicazioni delle reti di calcolatori}
+			\subsubsection{Applicazioni aziendali}
+			Una rete in ambito aziendale è utile perchè permette la condivisione di risorse, indipendentemente dalla posizione fisica dell'utente e della risorsa.
+			Per risorsa in questo caso intendiamo programmi, periferiche (ad esempio stampanti, dispositivi di memorizzazione) e dati.
+			Per le aziende può essere utile anche utilizzare delle VPN (Virtual Private Network), per unire più reti situate in punti diversi del mondo in un'unica rete interna all'azienda.
+			È  molto utilizzato il modello client/server, dove i dati sono memorizzati in macchine molto prestanti (server) e gli utenti (in questo caso gli impiegati) utilizzano macchine semplici (client) che permettono l'accesso ai dati situati nel server.
+			Una rete è anche utilizzata come mezzo di comunicazione tra gli impiegati o qualsiasi altra persona. Gli utenti possono scambiarsi email, effettuare chiamate utilizzando software VoIP. È possibile accedere da remoto ai propri desktop (desktop sharing) o gestire anche i propri affari con un modello di e-commerce.
+			\subsubsection{Applicazioni domestiche}
+			In ambito domestico, una rete è utilizzata per connettersi al mondo, leggere quotidiani online, condividere contenuti multimediali (ad esempio utilizzando il protocollo P2P, dove non c'è una vera distinzione tra client e server ma ognuno può comunicare con chiunque), comunicare con altre persone utilizzando email o instant messaging. Un utente può studiare da casa (online teaching) o condividere i propri pensieri su un social network. Gruppi di persone possono cooperare per realizzare contenuti (ad esempio le Wiki).
+			È possibile anche effettuare acquisti o accedere a servizi finanziari, pagare le bollette, partecipare ad aste on-line.
+			È possibile usare una rete per intrattenersi, videogiocando online o guardando contenuti multimediali in streaming.
+			\subsubsection{Utenti mobili}
+			È possibile connettersi ad una rete utilizzando mezzi trasmissivi wireless.
+			Le reti wireless sono utili in mobilità.
+			I telefoni cellulari utilizzando delle reti senza fili per poter comunicare, scambiare SMS e anche accedere ad Internet mediante reti 3G e 4G.
+			Si sta difofndendo anche l-m-commerce, dove per pagare un prodotto si utilizza il credito telefonico.
+			Le reti di sensori sono fatte di nodi che raccolgono e consegnano in modo wireless il dato che hanno registrato dal mondo circostante, questo approccio è ampliamento utilizzate per l'IOT (Internet Of Things).
+			In commercio ci sono anche i wereable computer, come orologi, pacemaker ed iniettori di insulina.
+			\subsubsection{Risvolti sociali}
+			Opinioni espresse pubblicamente sui social network possono nuocere a qualcuno o non essere politicamente corrette. Inoltre su internet si può trovare facilmente materiale piratato o illegale, costringendo agli operatori di rete di bloccare contenuti o addirittura servizi come il P2P.
+			Con neutralità della rete si intende che la comunicazione deve essere uguale per tutti indipendentemente dal contenuto, dalla sorgente e dal fornitore del contenuto.
+			Per constrastare la pirateria online sono state creati sistemi automatici in grado di inviare avvisi a fornitori di servizi, agli utenti e agli operatori di rete sospetti di violazione di copyright (DMCA).
+			La privacy online è un altro punto saliente. Ad esempio, i governi sorvegliano i cittadini, analizzando le mail per trovare informazioni a riguardo di comportamenti illeciti.
+			Dei file chiamati cookie,memorizzati nei PC degli utenti, permettono alla aziende di tracciare le attività degli utenti, ma consentono anche di diffondere informazioni private dell'utente.
+			Online è facilmente diventare vittime di phising o di virus.
+			Per distinguare sistemi automatizzati da un utente sono stati sviluppati i CAPTCHA (variante del test di Touring).
+		\subsection{Hardware di rete}
+		Per progettare una rete è necessario tenere conto di queste due caratteristiche:
+		\begin{enumerate}	  
+			\item tecnologia di trasmissione
+			\begin{enumerate}
+				\item collegamenti broadcast, un solo canale di comunicazione condiviso da tutte le macchine nella rete. Ogni macchina riceve il messaggio. Nel messsaggio inviato è presente un campo indirizzo che identifica il ricevente.
+				Solo la macchina specificata nel campo indirizzo processa e legge il messaggio, le altre macchine lo ignorano.
+				In un collegamento broadcast è possibile, usando un indirizzo speciale, inviare il messaggio a tutti i dispositivi nella rete. Alcuni sistemi broadcast supportano l'invio di un messaggio ad un sottoinsieme delle macchine (multicast)
+				\item collegamenti punto a punto, connettono coppie di computer. I messaggi possono dover visitare più macchine intermedie per arrivare a destinazione. Se è presente un solo ricevente e un solo trasmittitore, la trasmissione punto a punto è chiamata unicast.
+			\end{enumerate}
+			\item scala
+			\begin{enumerate}
+				\item PAN
+				\item LAN
+				\item MAN
+				\item WAN
+			\end{enumerate}
+		\end{enumerate}
+		La connessione di due o più reti è chiamati internetwork. Internet è una internetwork.
+			\subsubsection{PAN}
+				Permettono ai dispositivi di comunicare nello spazio fisico a portata di una persona. Questi dispositivi possono essere, ad esempio, mouse, tastiera, smartwatch, auricolari. Una rete wireless a corto raggio è la rete Bluetooth, che adottano il paradigma master-slave: ad esempio, il pc è un master che comunica con i slave (tastiera, mouse), decidendo che indirizzi e frequenze usare, per quanto tempo comunicare, eccetera.
+				Le reti PAN possono essere realizzate anche con tecnologie diverse dal bluetooth, come ad esempio gli RFID.
+			\subsubsection{LAN}
+			Una rete LAN è una rete privata che opera all'interno di un edificio o nelle sue vicinanze. Sono utilizzate per connetere PC e dispositivi per permettere la condivisione di risorse. Una LAN aziendale è chiamata enterprise network. Esistono anche LAN wireless: ogni macchina ha un ricevitore radio e un'antenna per comunicare con gli altri oppure con un AP (Access Point). Un AP distribuisce i pacchetti tra i dispositivi a lui collegati oppure tra i dispositivi e Internet.
+			Se i computer sono vicini tra loro possono comunicare usando il protocollo P2P.
+			Le LAN cablate utilizzano cavi di fibra ottica o di rame. Le LAN sono abbastanza piccole, quindi il tempo di trasmissione nel caso peggiore è limitato e noto a priori. Le LAN cablate viaggiano a 100 Mbps / 1 Gbps, hanno bassi tempi di ritardo e commettono pochi errori di trasmissione. 
+			Ogni computer si connette ad un  dispositivo chiamato switch con una connessione punto a punto. Per costruire reti LAN grandi è possibile collegare tra loro più switch attraverso le porte. 
+			È possible anche suddividere una grande LAN in reti logiche più piccole, chiamate VLAN (virtual LAN).\\
+			Le reti broadcast wireless e cablate si possono dividere in statiche e dinamiche, a seconda del modo in cui è allocato il canale:
+			\begin{enumerate}
+				\item Allocazione statica: suddividere il tempo in intervalli discreti e usare un algoritmo round-robin. Una macchina può comunicare solo se è attivo il proprio turno. La capacità del canale viene sprecata se una macchina non ha nulla da trasmettere durante il proprio slot.
+				\item Allocazione dinamica: i metodi per questo tipo di allocazione possono essere centralizzati o non centralizzati.
+				\begin{enumerate}
+					\item Centralizzato: esiste una singola entità che stabilisce a chi spetta l'uso del mezzo.
+					\item Non centralizzato: non esiste un'entità centrale, ogni macchina decide se trasmettere o meno.
+				\end{enumerate}				
+			\end{enumerate}
+			Una rete LAN domestica deve essere sicura, non molto costosa, facilmente espandibile, e semplice da usare.
+			\subsubsection{MAN}
+			Una rete MAN copre una intera città. Un esempio di rete MAN è la rete di TV via cavo, o la rete WiMax (IEEE 802.16)
+			\subsubsection{WAN}
+			Una WAN copre una nazione o un continente. Una rete WAN è composta da sottoreti (subnet) dove risiedono gli host. Una sottorete è composta da linee di trasmissione ed elementi di commutazione. Le linee di trasmissione permettono di spostare i bit tra le macchine. Gli elementi di commutazione (switch) sono delle macchine che collegano due o più linee di trasmissione. Un esempio di elemento di commutazione è il router.
+			In una WAN gli host e la sottorete hanno proprietari e operatori diversi. I gestori di una sottorete sono i network provider.
+			I router inoltre connettono usualmente reti diverse, ad esempio Ethernet e SONET. Sono necessari quindi dei dispositivi che uniscano questi tipi diversi di rete.
+			Le WAN sono delle internetwork, ossia reti composite formate da più di una rete.\\
+			Ad una rete WAN può connettersi un singolo dispositivo oppure un'intera LAN.
+			Una VPN (Virtual Private Network) permette di collegare più reti LAN distanti tra loro, dando l'idea di operare su una singola rete locale.\\
+			Una sottorete può anche essere utilizzata da diverse aziende: l'operatore della sottorete si chiama provider di servizi di rete, e gli uffici sono i suoi clienti. Un provider che permettere ai suoi clienti di accedere ad Internet è chiamato ISP e la sottorete si chiama rete ISP.
+			Una rete WAN è composta da molte linee di trasmissione, ciascuna delle quali collega una coppia di router. È necessario quindi definire quale percorso devono fare i messaggi per arrivare a destinazione, mediante un algoritmo di routing, adottato dalla rete. Un algoritmo di inoltro invece è la strategia adottata localmente da un router per decidere dove inoltrare un pacchetto.\\
+			Le reti telefoniche e satellitari sono un esempio di reti WAN broadcast e wireless.
+			\subsubsection{Internetwork}
+			Una internetwork è un insieme di reti interconnesse. Internet è un esempio di internetwork, la quale utilizza le reti ISP per connettere reti aziendali, domestiche, e moltre altre reti.
+			Una rete è composta dalla combinazione di una sottorete e dei suoi host.
+			Due reti diverse possono essere collegate tra loro mediante un gateway.
+		\subsection{Software di rete}
+			\subsubsection{Gerarchie di protocolli}
+				La maggior parte delle reti è organizzata come una pila di livelli o strati. Ogni livello offre servizi ai livelli superiori, schermandoli dai dettagli implementativi (concetto definito come information hiding).\\
+				Un protocollo è un accordo tra le parti che comunicano sul modo in cui deve procedere comunicazione.\\
+				Le entità che stanno sullo stesso livello sono chiamati peer. I peer comunicano tra loro utilizzando il protocollo.\\
+				Ogni livello passa i dati al livello sottostante fino a raggiungere il livello 1, che si appoggia al supporto fisico su cui avviene la comunicazione.\\
+				Tra ogni livello è presente una interfaccia, che definisce le operazioni e i servizi che il livello inferiore offre al livello superiore.\\
+				L'insieme di livelli e protocolli si chiama architettura di rete. L'insieme dei protocolli utilizzati da un sistema è chiamato pila di procolli.
+			\subsubsection{Progettazione dei livelli}
+				Ci sono alcuni problemi sulla progettazione di livelli. È necessario che i protocolli garantiscono l'laffidabilità della rete. Ad esempio, è necessario fornire meccanismi per intercettare errori, oppure di fornire codici di correzione degli errori che permettono di ricostruire il messaggio in modo corretto. \\
+				Un altro problema consiste nel trovare un percorso valido attraverso la rete, utilizzando un algoritmo di routing.\\
+				Altri problemi sono: naming dei dispositivi connessi alla rete, scalabilità della rete, allocazione delle risorse (come dividere la banda?), flow control (come controllare il flusso per evitare congestioni?), sicurezza delle reti.
+			\subsubsection{Servizi connectionless e connection oriented}
+				\begin{enumerate}
+					\item servizi orientati alla connessione: l'utente deve stabilire una connessione, usarla e rilasciarla. Nella maggior parte dei casi l'ordine dei bit trasmessi è conservato. In alcuni casi trasmettitore, ricevente e la sottorete eseguono una negoziazione dei parametri da usare (es: massima dimensione di un messaggio, la qualità del servizio richiesta). 
+					\item servizio connectionless: ogni messaggio è instradato in modo indipendente dai messaggi successivi. \\
+					Ogni nodo intermedio deve ricevere completamente il pacchetto prima di inoltrarlo (store-and-forward).
+					Non è garantito l'ordine di arrivo dei messaggi.
+				\end{enumerate}
+				Oltre a questa distinzione, i servizi possono essere caratterizzati ulteriormente in affidabili e non affidabili:
+				\begin{enumerate}
+					\item servizi affidabili: servizi che non perdono mai dati. Utilizzato per trasferire file. Ci sono ulteriormente 2 distinzioni per questo tipo di servizi orientati alla connessione: message sequence, dove i confini dei messaggi vengono preservati, e il byte stream, in cui la connessione è un semplice flusso di byte (quest'ultimo utilizzato per i film in streaming). \\
+				Un servizio affidabile non connesso viene chiamato datagram con confermas
+				\item servizi non affidabili: quando è possibile una perdita di dati. Utilizzato ad esempio per il VoIP, dove il ritardo è inaccettabile ma si può tollerare un po' di rumore.
+				Un servizio senza connessione non affidabile viene chiamato servizio datagram.
+				\end{enumerate}
+			\subsubsection{Primitive di servizio}
+			Un servizio è specificato da un insieme di primitive.. L'insieme delle primitive disponibili dipende dalla natura del servizio offerto (ad esempio se è connection oriented o no). 
+			
+			\subsubsection{Relazione tra servizi e protocolli}
+			Un servizio è un insieme di operazioni che un livello offre a quello superiore. Il servizio definisce QUALI operazioni, ma non COME vengono implementate.\\
+			Un protocollo invece è un insieme di regole che controllano il formato e il significato dei pacchetti o messaggi scambiati tra le entità pari all'interno di un livello. \\
+			Le entità usano i protocolli per implementare le loro definizioni dei servizi. Possono cambiare il protocollo ma non il servizio. 
+		\subsection{Modelli di riferimento}
+			\subsubsection{Modello OSI}
+			Il modello OSI si fonda su una proposta dell'ISO (International Standard Organization) di standardizzare i protocollli impiegati nei livelli. Presenta 7 livelli:
+			\begin{enumerate}
+				\item LIVELLO FISICO: si occupa della trasmissione grezza dei dati sottoforma di bit.
+				\item LIVELLO DATA LINK: fa diventare una comunicazione grezza in una linea che appare priva di errori.Un sottolivello MAC si occupa di controllare l'accesso al mezzo trasmissivo.
+				\item LIVELLO DI RETE: controlla il funzionamento della sottorete. Controlla le congestioni e l'instradamento dei pacchetti.
+				\item LIVELLO DI TRASPORTO: accetta i dati dal livello superiore, li suddivide in unità più piccole, li passa al livello di rete e si assicura che i dati arrivino correttamente a destinazione. 
+				\item LIVELLO DI SESSIONE: permette a utenti su computer diversi di stabilire una sessione. Una sessione offre: controllo del dialogo, gestione dei token, sincronizzazione. 
+				\item LIVELLO DI PRESENTAZIONE: si occupa della sintassi e della semantica dell'informazione trasmessa. Gestisce delle strutture dati astratte con cui è possibile consentire la comunicazione tra computer che possiedono una diversa rappresentazione dei dati.
+				\item LIVELLO APPLICAZIONE: protocolli richiesti dagli utenti. Contiene il protocollo HTTP, FTP, SMTP..
+			\end{enumerate}	
+			\subsubsection{Modello TCP/IP}
+				\begin{enumerate}
+					\item LIVELLO LINK: descrive cosa devono fare i collegamenti per esaudire le necessità di questo livello internet senza connessione. È un interfaccia tra host e mezzo trasmissivo.
+					\item LIVELLO INTERNET:permette a degli host di inviare pacchetti su qualsiasi rete, e fare in modo che questi possano viaggiare in modo autonomo verso la destinazione. Protocollo IP
+					\item LIVELLO TRASPORTO: consente la comunicazione tra peer degli host sorgente e destinazione. Sono stati definiti 2 protocolli di trasporto end-to-end:
+					\begin{enumerate}
+						\item TCP: Trasmission Control Protocol, affidabile orientato alla connessione. Permette ad un flusso di byte di raggiungere la destinazione senza errori. Gestisce anche il controllo del flusso, per evitare congestioni. 
+						\item UDP: User Datagram Protocol, inaffidabile senza connessione. È usato soprattutto per trasmissione di voce e filmati. 
+					\end{enumerate}
+					\item LIVELLO APPLICAZIONE: contiene tutti i protocolli di livello superiore. TELNET, FTP, SMTP, HTTP eccetera...
+				\end{enumerate}
+		\subsection{Esempi di reti}
+			\subsubsection{Internet}
+			Internet è una raccolta di reti diverse che usano determinati protocolli e offrono servizi comuni. 
+			\begin{enumerate}
+				\item ARPANET: Internet è nato come progetto militare. ARPANET è stata sviluppata verso la fine degli anni '60. Era composta da minicomputer chiamati IMP collegati da linee di trasmissione a 56 kbps. Ogni IMP doveva essere collegato ad almeno altri due IMP. La sottorete era basata su datagrammi: in caso di distruzione di alcune linee, i pacchetti facevano un'altra strada. Inizialmente, ARPANET collegava diverse università degli USA. Verso gli anni '80 venne creato il DNS, poi evolutosi in un database distribuito. 
+				\item NSFMET
+			\end{enumerate}
+		\newpage
+		\section{Il livello fisico}
+		Definisce gli aspetti elettrici, di temporizzazione e le altre modalità con cui i bit vengono spediti sui canali di comunicazione.\\
+		\subsection{Basi teoriche della comunicazione dati}
+		Le informazioni possono essere trasmesse via cavo variando alcune proprietà fisiche (tensione).
+		\subsubsection{Analisi di Fourier}
+		Qualunque funzione periodica sufficientemente regolare g(t) con periodo T può essere ottenuta sommando un numero di funzioni seno e coseno: \\
+		\begin{equation}
+			g(t) = \frac{1}{2}c+\sum_{n=1}^\infty a_i\sin (2\pi nft)+\sum_{n=1}^\infty b_i\cos (2\pi nft)\\
+		\end{equation}
+		f=1/T rappresenta la frequenza fondamentale \\ 
+		a\ped n e b\ped n rappresentano le ampiezze seno e coseno delle armoniche (termini) n-esime\\
+		c rappresenta una costante.\\
+		Se il periodo T è noto e le ampuezze sono definite, la funzione originale del tempo si ricava eseguendo le somme.\\
+				\begin{equation}
+			a_n=\frac{2}{T} \int_{0}^{T}g(t)\sin (2\pi nft) dt			
+		\end{equation}
+		\begin{equation}
+			b_n=\frac{2}{T} \int_{0}^{T}g(t)\cos(2\pi nft)dt
+		\end{equation}
+		\begin{equation}
+			c=\frac{2}{T} \int_{0}^{T}g(t)dt
+		\end{equation}
+		\subsubsection{Segnali a banda limitata}
+			I canali reali influiscono in modo non omogeneo sui segnali a diverse frequenze.\\
+			Su un cavo, le ampiezze sono trasmesse senza modifiche fino ad una certa frequenza f\ped c (misurata in Hertz o in cicli al secondo) e attenuate per tutte le frequenze superiori.
+			L'intervallo di frequenze trasmesse senza una forte attenuazione è chiamato banda (bandwith). La banda passante è compresa tra 0 e la frequenza dove la potenza è attenuata del 50\%. \\
+			La banda passante è una proprietà fisica del mezzo di trasmissione e dipende dalla sua costruzione, lunghezza e spessire. Per ridurre l'ampiezza della banda è possibile inserire un filtro all'interno del circuito. Ad esempio i canali wireless 802.11 possono usare fino a 20Mhz di banda, per cui le interfacce radio filtrano la banda del segnale a questa dimensione.\\
+			Filtrare la banda può portare ad una maggior efficenza del sistema.\\
+			La larghezza di banda è la larghezza della banda delle frequenze. \\
+			I segnali che partono da 0 fino ad una frequenza massima si chiamano banda base (baseband).\\
+			I segnali che vengono traslati per occupare una gamma di frequenze più alte si chiamano banda passante (passband).\\
+			La banda analogica è una quantità in Hz, la banda digitale è il massimo tasso con cui un canale è in grado di trasportare dati, e si misura in bit al secondo. 
+		\subsubsection{Velocità massima di trasmissione di un canale}
+		Nyquist dimostrò che se si trasmette un segnale arbitrario attraverso un filtro passa basso la cui ampiezza di banda è pari a B, il segnale filtrato può essere ricostruito completamente prendendo solo 2B campioni al secondo. Se il segnale è composto da V livelli discreti, il teorema di Nyquist afferma che
+		\begin{equation}
+			massimo\: tasso\: trasmissivo\: = 2B \log_2{V} \, bit/s
+		\end{equation}
+		Un canale a 3 kHz, per esempio, non è in grado di trasmettere segnali binari a velocità maggiore di 6000 bps. \\
+		Se sul canale è presente un rumore casuale, la situazione peggiora.\\
+		Il livello di rumore termico (rumore casuale provocato dal movimento delle molecole del sistema) si calcola facendo il rapporto tra la potenza del segnale e la potenza del rumore ed è chiamato SNR (signal-to-noise ratio).
+		Il rapporto segnale rumore è pari a S/N (S = potenza del segnale, N = potenza del rumore).
+		Di solito si cita la quantità 10log\ped 10 S/N, misurata in decibel. \\
+		(Shannon) Il massimo tasso di invio dei dati (capacità) in bit/s su un canale rumoroso la cui ampiezza di banda è pari a B Hz e il cui rapporto segnale-rumore è S/N, è dato dal numero:
+		\begin{equation}
+		massimo\: numero\: di\: bit/s\: = B \log_2(1+\frac{S}{N})
+		\end{equation}
+		che definisce la massima capacità di un canale fisico. 
+		\subsection{Mezzi di trasmissione vincolati}
+		È possibile utilizzare diversi tipi di mezzi fisici per realizzare una trasmissione.
+		\subsubsection{Supporti magnetici}
+		Le informazioni vengono scritte su un supporto fisico e lo si trasporta alla destinazione. Più economico rispetto ad una rete.
+		\subsubsection{Doppino}
+		Il doppino (twisted pair) è composto da due conduttori di rame isolati, spessi circa 1mm, avvolti uno intorno all'altro in una forma elicoidale. I cavi vengono intrecciati per evitare la formazione di antenne .\\
+		Un segnale è costruito da una differenza di potenziale tra i due cavi della coppia, come protezione per il rumore esterno (il quale, influenzando entrambi i cavi, mantiene inalterato il valore di questa differenza).\\
+		Un esempio di doppino è quello telefonico, usato per effettuare chiamate o accedere ad Internet mediante ADSL. Per distanze maggiori di qyakcge kilometro è necessario fare uso di ripetitori per amplificare il segnale.
+		I doppini vengono usati per trasmettere segnali analogici e segnali digitali.
+		L'ampiezza di banda dipende dal diametro del cavo e dalla distanza percorsa. Per tratti di pochi kilometri è possibile raggiungere velocità di circa qualche megabit al secondo.
+		Oggi si utilizza il doppino Cat. 5, consiste di due cavi isolati e intrecciati tra loro. All'interno di una guaina sono presenti 4 di queste coppie.\\
+		Standard differenti di LAN possono usare i doppini in maniera diversa. Ethernet 100 Mbps uso solo due coppie, una per ogni direzione. Ethernet 1 Gbps usa tutte le coppie in entrambe le direzioni.\\
+		Collegamenti utilizzabili in entrambe le direzioni contemporaneamente sono chiamati full-duplex. \\
+		Colelgamenti in entrambi le direzioni ma che sfruttano una direzione alla volta sono chiamati half-duplex.\\
+		Collegamenti unidirezionali sono chiamati simplex.\\
+		Esistono anche altre categorie, come Cat. 6 o Cat. 7. Fino a Cat. 6 questi cablaggi sono identificati con UTP (unshielded twisted pair) e consistono solo di cavi e isolanti. Cat. 7 invece possiede una schermatura su ogni singolo doppino e anche attorno a tutto il cavo.
+		\subsubsection{Cavo coassiale}
+		Il cavo coassiale (coax) è più schermato del doppino, e quindi copre distanze più lunghe ed ha una velocità più elevata. \\
+		Esistono due tipi di cavi coax: il primo a 50 ohm è stato utilizzato per le trasmissione digitali, il secondo, a 75 ohm, per quelle analogiche e al tv via cavo.\\
+		Un cavo coax è composto da un nucleo conduttore coperto da un rivestimento isolante, circondato da un conduttore cilindrico realizzato con una calza di conduttori sottili, avvolto da una guaina protrettiva di plastica.\\
+		Ha una grande ampiezza di banda e resiste fortemente al rumore. La banda disponibile dipende dalla qualità e dalla lunghezza del cavo (i cavi moderni hanno un'ampiezza di banda pari a qualche GHz).
+		\subsubsection{Linee elettriche}
+		Sono usate per comunicazioni a basso tasso di invio o bit-rate.\\
+		Il segnale dati è sovrapposto al segnale elettrico a bassa frequenza. Il segnale elettrico viene inviato a 50-60 Hz e il mezzo trasmissivo attenua le frequenze più late richieste dalle trasmissioni dati. Soffre molto del rumore generato dai dispositivi elettrici accesi.
+		\subsubsection{Fibre ottiche}
+		Le fibre ottiche sono utilizzate per lel trasmissioni a lunga distanza nelle dorsali di rete, le reti LAN ad alta velocità e l'accesso ad Internet ad alta velocità come FttH. \\
+		Un sistema di trasmissione ottico è formato da 3 componenti: la sorgente luminosa, il mezzo trasmissivo e il rilevaore. 
+		Il mezzo trasmissivo è una fibra di vetro. Il rilevatore, quando il mezzo è colpito dalla luce, genera un impulso elettrico.\\
+		Non c'è dispersione della luce, in quanto quando un raggio luminoso passa da un materiale all'altro si rigrange sul confine tra i due materiali. A causa della riflessione totale, la luce rimane intrappolata. \\
+		La fibra può contenere molti raggi, che rimbalzano ad angoli diversi (ogni raggio ha una modalità diversa). \\*
+		Una fibra multimodale presenta più raggi a diverse modalità.\\
+		Una fibra monomodale, più costosa ma più veloce, permette alla luce di non rimbalzare (in quanto il diametro della fibra viene ridotto).
+		\paragraph{Trasmissione della luce attraverso la fibra.}
+		L'attenuazione della luce attraverso il vetro dipende dalla sua lunghezza d'onda, definita come il rapporto tra la potenza del segnale di ingresso e quello di uscita.\\
+		Le lunghezze d'onda più comuni sono 3: la banda a 0,85 micron ha il fattore di attenuazione più forte, e viene usata per brevi distanze. La banda a 1,30 micron ha una buona attenuazione come anche la banda a 1,55 micron.\\
+		La dispersione cromatica è il fenomeno in cui gli impulsi luminosi trasmessi nella fibra si espandono nella lunghezza d'onda durante la propagazione. Creando impulsi di una certa forma è possibile annullare quasi tutti gli effetti della dispersione e inviare impulsi per migliaia di chilometri. senza modifiche sensibili (sotiloni).
+		\paragraph{Cavi in fibra ottica.}
+		Al centro di un cavo in fibra ottica si trova il nucleo (core) di vetro attraverso il quale viene propagata la luce. Nelle multimodali ha un diametro di 50 micron, in quelle monomodali dagli 8 ai 10 micron.\\
+		Il nucleo è circondato da un rivestimento di vetro (cladding) con un basso indice di riflazione. Poi c'è una fodera di plastica che protegge il tutto. Le fibre sono raggruppate in fasci, protetti da una guaina.\\
+		Le fibre si possono collegare in 3 modi: possono terminare in connettori (connettori perdono circa il 10-20\% della luce), possono essere attaccate meccanicamente (-10\% della luce) oppure fusi (piccola attenuazione del segnale). Le riflessioni avvengono sul punto di giuntura, e l'energia riflessa può interferire con il segnale.\\
+		I tipi di sorgenti luminose sono 2: i LED o i laser a semiconduttore.
+		\paragraph{Confronto tra fibre ottiche e cavi in rame.}
+		Le fibre ottiche sono molto vantaggiose: hanno maggiore ampiezza di banda e i ripetitori possono essere installati dopo 50 km (mentre per i cavi di rame ogni 5 km). La fibra è anche sottile e leggera, ed è difficile intercettare i dati trasportati (sono più sicure dei cavi di rame). Però è facilmente danneggiabile, le interfacce costano di più di quelle di rame, e la comunicazione bidirezionale richiede due fibre o due bande di frequenza.
+		\subsection{Trasmissioni wireless}
+		\subsubsection{Lo spettro elettromagnetico}
+		Quando gli elettroni si spostano creano onde elettromagnetiche. Il numero di oscillazioni al secondo di un'onda è chiamato frequenza (f) ed è misurato in Hz. La distanza tra due massimi o minimi consecutivi è chiamata lunghezza d'onda ed è indicata dalla lettera $\lambda$.\\
+		Nel vuoto le onde elettromagnetiche indipendentemente dalla frequenza viaggiano alla stessa velocità chiamata velocità della luce pari a $c = 3*10^{8} m/s$. Nei cavi in rame e nelle fibre ottiche tale velocità scende a 2/3 ed è dipendente dalla frequenza.
+		La relazione tra f, $\lambda$ e c (nel vuoto) è:
+		\begin{equation}
+			\lambda f = c	
+		\end{equation}				
+		La quantità di informazione che un'onda elettromagnetica può trasportare dipende dall'energia ricevuta ed è proporzionale alla sua banda. \\
+		Esistono diverse tecniche di suddivisione della banda:
+		\begin{enumerate}
+		\item spettro distribuito a frequenza variabile: il trasmettitore cambia frequenza centinaia di volte al secondo. Utilizzata in ambito militare per garantire sicurezza (trasmissioni difficili da rilevare e difficili da disturbare).\\
+		È utile in zone dello spettro molto affollate, e viene usata anche per Bluetooth. 
+		\item spettro distribuito a sequenza diretta: usa una sequenza codificata per distribuire il segnale su una banda di frequenza molto più ampia ed è efficente nel permettere a più segnali di condividere le stesse bande di frequenza. \\
+		Ad ogni segnale può essere assegnato un diverso codice mediante CDMA, metodo usato dalle reti 3G  e GPS. 
+		\item UWD (ultra wideband): trasmette dati tramite una serie di immpulsi rapidi in posizioni diverse. Il segnale viene disperso su una banda di frequenza molto ampia. 
+		\end{enumerate}
+		\subsubsection{Trasmissioni radio}
+		Le onde in radio frequenza RF sono semplici da generare e attraversano gli edifici. Le onde sono omnidirezionali, si propagano quindi verso tutte le direzioni. \\
+		Alle frequenze più basse le onde radio attraversano bene gli ostacoli. La potenza diminuisce allontanandosi dalla sorgente (path loss).\\
+		Alle frequenze più alte le onde viaggiano in linea retta e rimbalzano contro gli ostacoli, e vengono assorbite dagli eventi atmosferici. \\
+		Le onde radio sono soggette ad interferenze elettriche.\\
+		Nelle bande VLF, LF e MF le onde radio seguono il terreno, si possono ricevere fino a 100 km di distanza dalla sorgente e attraversano gli edifici. \\
+		Nelle bande HF e VHF le onde terrestri tendono ad essere assorbite dal pianeta, ma le onde che raggiungono la ionosfera sono riflesse. 
+		\subsubsection{Trasmissione a microonde}
+		Le microonde non attraversano bene gli edifici. Alcune onde inoltre si possono infrangere sugli strati pù bassi dell'atmosfera e arrivano un po' dopo le onde dirette. Questo fenomeno è chiamato multipath fading e può annullare il segnale. Le microonde sono anche abbastanza economiche. Le bande a circa 4 Ghz sono facilemnte assorbibili dall'acqua. 
+		\paragraph{Politiche dello spettro elettromagnetico.} I governi nazionali assegnano lo spettro per le radio AM e FM, per le TV e i telefoni. \\ Il problema sorge sui fornitori di servizi, e sono stati utlizzati 3 algoritmi per spartire le frequenze: beauty contest (ogni fornintore doveva motivare il valore della proposta), lotteria, vendita all'asta. \\
+		Un altro approccio è quello di non assegnare le frequenze, e regolare la potenza dei dispositivi. Alcune bande di frequenza chiamate ISM sono utilizzate senza licenze, e vengono usate per telecomandi, telefoni senza fili eccetera.
+		\subsubsection{Trasmissione a infrarossi}
+		A corto raggio si utilizzano i raggi infrarossi non vincolati. È un sistema direzionale, economico e facile da realizzare. Non attraversano i muri delle stanze, quindi è possibile utilizzarle per i telecomandi delle TV. Sono più sicuri delle onde radio, non richiedono una licenza.
+		\subsubsection{Trasmissione a onde luminose}
+		Laser montati sui tetti permettono di realizzare una LAN tra due edifici. Questo tipo di sistema è unidirezionale. Non richiede licenze. \\
+		Una trasmissione dati può essere realizzata codificando le informazioni come successioni di accensione e spegnimento dei LED a una velocità non percepibile ad un occhio umano. 
+		\subsection{Comunicazioni satellitari}
+		Un satellite di comunicazione è un grande ripetitore di microonde collocato nel cielo. Contiene transponder (ricetrasmettitori satellitari), i quali ascoltano ognuno una parte dello spettro, amplificano il segnale e lo ritrasmettono su un'altra frequenza. I raggi puntati posono essere larghi o stretti (bent pipe).\\
+		È possibile anche manipolare o ridirigere i flussi di dati all'interno della banda, per poter ridurre il rumore. 
+		\subsubsection{Satelliti geostazionari}
+		I satelliti geostazionari, GEO, sono collocati su orbite alte. L'allocazione degli slot orbitali è gestita dall'ITU. I GEO sono molto pesanti, e sono alimentati ad energia solare. Possiedono motori a razzo per permetterne l'allineamento (station keeping). L'ITU assegna anche le bande di frequenza, in quanto arrivate al sottosuole potrebbero interferire con le onde esistenti. \\
+		Ogni satellite ha più antenne e trasponder: possono avvenire contemporaneamte più trasmissioni nei due sensi. \\
+		Esistono anche microstazioni chamate VSAT, che possiedono antenne piccole e consumano 1 watt di potenza, usate dalle TV satellitari. È necessario installare hub terrestri che trasmettono il traffico attraverso le stazioni VSAT. \\
+		Questi satelliti sono mezzi di trasmissione broadcast e quindi è necessario adottare sistemi di crittografia per garantire una sicurezza della comunicazione. Il costo della trasmissione di un messaggio è indipendente dalla distanza attraversata.
+		\subsubsection{Satelliti su orbite medie}
+		Ad altitudini tra le due fasce di Van Alien si trovano i satelliti MEO. Impiegano 6 ore per girare intorno alla Terra, e devono essere seguiti mentre si spostano. Coprono un'area più piccola e sono raggiungibili per mezzo di trasmettitori meno potenti. Un esempio sono i 30 satelliti GPS che operano a circa 20.000 km.
+		\subsubsection{Satelliti su orbite basse}
+		Satelliti LEO. Si spostano rapidamente e sono quindi necessari numerosi satelliti di questo tipo. Ci sono 2 tipi di satelliti LEO:
+		\begin{enumerate}
+			\item Iridium: quando un satellite spariva dalla vista, ne appariva un altro. Si trovano ad un'altitudine di 750 kmk. È presente un satellite ogni 32 gradi di latitudine. \\
+			Sei collane di satelliti coprono la terra, la comunicazione tra clienti distanti avviene nello spazio: ogni satellite comunica con quello suo limitrofo.
+			\item Globalstar: 48 satelliti LEO, utilizza un modello bent-pipe (informazioni trasmesse sulla terra subito).
+			\item Cubesat: piccoli satelliti da 10cm di lato.
+		\end{enumerate}
+		\subsubsection{Satelliti o fibra ottica?}
+		I satelliti vengono preferiti per scopi militari e vengono usati dove le infrastrutture terrestri non son ancora ben sviluppate, ed anche per i programmi televisivi in broadcast. 
+		\subsection{Modulazione digitale e multiplexing}
+		Il processo di conversione tra bit e segnali che li rappresentano prendono il nome di modulazione digitale. 
+		\subsubsection{Trasmissione in banda base}
+		Si usa una tensione positiva per rappresentare un 1 e una negativa per rappresentare lo zero (NRZ). In questo modo, il segnale segue l'andamento dei dati.\\
+		Il ricevente converte in bit il segnale, campionandolo a intervalli regolari di tempo e decodificandolo assegnando i campioni ai simboli più vicini. 
+		\paragraph{Efficenza di banda.}  Per sfruttare meglio la banda è possibile utilizzare più di due livelli di segnale. \\
+		Il bit rate equivale al symbol rate (tasso con cui il segnale cambia) moltiplicato per il numero di bit in ogni simbolo. \\
+		Alcuni dei livelli di segnale sono usati come protezione contro gli errori e semplificano la progettazione.
+		\paragraph{Clock recovery} 
+		È necessario che il ricevente conosca quando un simbolo termina. Con NRZ, diventa difficile distinguire i bit. \\ Come soluzione è possibile spedire al destinatario un segnale di clock separato (spreco di risorse), oppure mandare il segnale di cock in XOR con i dati (Manchester encoding). Questo secondo approccio richiede l'invio del doppio dei dati.\\
+		Ci sono anche altri modi per codificare: possiamo codificare 1 come transazione e 0 come una situazione stazionaria (NRZI). Ma lunghe sequenze di 0 possono creare problemi. \\
+		Il codice 4B/5B associa ad ogni sequenza di 4 bit una sequenza di 5 bit, scelta in modo tale da non avere più di tre 0 consecutivi (overhead del 25\%).\\
+		Un altro approccio è lo scrambling, ossia far sembrare i dati come generati casualmente. Uno scrambler applica una XOR tra i dati e una sequenza pseudocasuale. IL ricevente applicherà una XOR ai bit con la stessa sequenza pseudocasuale. Non aggiunge overhead, e i segnali generati tendono ad essere bianchi (energia distribuita su tutte le componenti di frequenza). Non garantisce che non ci saranno lunghe sequenze di bit ripetuti.\\
+		\paragraph{Segnali bilanciati}
+		I segnali sono bilanciati se hanno una tensione negativa pari a quella positiva (media pari a 0).
+		Il bilanciamento aiuta il clock recovery.\\
+		Per formulare un codice bilanciato si usano 2 livelli di tensione per rappresentare 1 (+1V e -1V) e 0V per rappresentare lo 0. Per trasmettere un 1 viene alternato +1V e +1V (codifica bipolare).\\
+		Un esempio di codice bilanciato è la codifica di linea 8B/10B, che mappa 8 bit su 10 bit di output (20\% overhead). \\
+		\subsubsection{Trasmissione in banda passante}
+		Per spedire un messaggio spesso si usano gamme di frequenze che non iniziano con lo 0, in quanto esistono vincoli legislativi e per evitare interferenze.\\
+		Possiamo prendere una segnale in banda base che occupa da 0 o B Hz e traslarlo fino ad occupare una banda passante da S a S+B Hz, senza cambiare il quantitativo di informazione che può trasportare. Per elaborare il segnale possiamo traslarlo in banda base in modo da avere una più semplice decodifica dei ati.\\
+		La modulazione digitale è ottenuta modulando un segnale portante che risiede in banda passante. 
+		\begin{enumerate}
+			\item ASK (Amplitude shift keying): due diverse ampiezze rappresentano 0 e 1. È possibile usare più di 2 livelli per rappresentare più simboli.
+		\end{enumerate}
+		
+		\subsubsection{Multiplexing  a divisione di frequenza}
+		\subsubsection{Multiplexing  a divisione di tetrasmissionpo}
+		\subsubsection{Multiplexing  a divisione di codice}
+\end{document}

@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage[utf8x]{inputenc}
 \usepackage[italian]{babel} 
+\usepackage{listings}
+\usepackage{color}
 \title{Reti di Calcolatori}
 \date{AA 2017-2018}
 \author{Giacomo Zanatta}
@@ -153,8 +155,11 @@
 			Internet è una raccolta di reti diverse che usano determinati protocolli e offrono servizi comuni. 
 			\begin{enumerate}
 				\item ARPANET: Internet è nato come progetto militare. ARPANET è stata sviluppata verso la fine degli anni '60. Era composta da minicomputer chiamati IMP collegati da linee di trasmissione a 56 kbps. Ogni IMP doveva essere collegato ad almeno altri due IMP. La sottorete era basata su datagrammi: in caso di distruzione di alcune linee, i pacchetti facevano un'altra strada. Inizialmente, ARPANET collegava diverse università degli USA. Verso gli anni '80 venne creato il DNS, poi evolutosi in un database distribuito. 
-				\item NSFMET
+				\item NSFMET: permetteva la connessione dei dipartimenti di informatica e dei laboratori ad ARPANET, via dial-up e linee d'affitto. \\
+				NSF costruì una rete di dorsale (backbone) per collegare i suoi 6 centri di ricerca.\\ Dato l'enorme successo, venne creata ANSNET di tipo commerciale. 
+				\item 
 			\end{enumerate}
+		\paragraph{Architettura di Internet} In Internet un computer si connette ad u ISP, il quale fornisce la connessione ad Internet. 
 		\newpage
 		\section{Il livello fisico}
 		Definisce gli aspetti elettrici, di temporizzazione e le altre modalità con cui i bit vengono spediti sui canali di comunicazione.\\
@@ -323,9 +328,509 @@
 		La modulazione digitale è ottenuta modulando un segnale portante che risiede in banda passante. 
 		\begin{enumerate}
 			\item ASK (Amplitude shift keying): due diverse ampiezze rappresentano 0 e 1. È possibile usare più di 2 livelli per rappresentare più simboli.
+			\item FSK (Frequency shift keying): è possibile usare due o più frequenze
+			\item PSK (Phase shift keying): è possibile usare due o più fasi. Ad esempio: BPSK, l'onda portante è traslata di 0 o 180 gradi. QPSK, 4 traslazioni: 45, 135, 225, 315 gradi. 
 		\end{enumerate}
-		
-		\subsubsection{Multiplexing  a divisione di frequenza}
-		\subsubsection{Multiplexing  a divisione di tetrasmissionpo}
-		\subsubsection{Multiplexing  a divisione di codice}
+		Per trasmettere più bit per simbolo è possibile combinare questi approcci ed usare più livelli. È possibile rappresentare le combinazioni di ampiezza e di fase in un diagramma a costellazioni. Esempi di diagramma a costellazioni: QAM-16 (16 combinazioni di ampiezza e fase per trasmettere 4 bit per simbolo), QAM-64 (64 combinazioni di ampiezza e fase per trasmettere 16 bit per simbolo).\\
+		È necessario porre attenzione all'assegnazione dei bit ai simboli, per evitare errori generati dal rumore.  Si usa la codifica di Gray, ossia i simboli adiacenti differiscono di un solo bit. 
+		\subsubsection{Multiplexing a divisione di frequenza}
+		Per permettere a molti segnali di condividere uno stesso canale trasmissivo sono nate le tecniche di multiplexing.\\
+		FDM (Frequency Division Multiplexing) sfrutta la trasmissione in banda passante per condividere un canale: lo spettro viene diviso in bande di frequenza di cui ogni utente ha un uso esclusivo. \\
+		L'eccesso di allocazione prende il nome di banda di guardia (guard band) e permette di tenere i canali ben separati tra loro. Un picco ai bordi del canale viene trattato come rumore nel canale adiacente.\\ FDM è usato ad alto livello nelle reti telefoniche e cellulari, wireless e satellitari. \\
+		Per dati digitali viene usato OFDM (Ortogonal frequency division multiplexing), che divide la banda del canale in molte sottoportanti che inviano dati in maniera indipendente. Ogni sottoportante si estende in quelle adiacenti: la risposta in frequenza in corrispondenza del centro delle sottoportanti adiacenti è 0, quindi può essere campionata senza interferenza nella frequenza centrale dai vicini. È necessario un tempo di guardia per ripetere un sottoinsieme dei simboli trasmessi, per ottenere la risposta in frequenza richiesta.
+		\subsubsection{Multiplexing a divisione di tempo}
+		Un'alternativa è TDM (Time Division Multiplexing): gli utenti trasmettono a turno secondo una politica round-robin, prendendo possesso della banda completa. I flussi di bit inviati devono essere sincronizzati nel tempo: per questo vengono usati dei piccoli intervalli (tempi di guardia) per permettere aggiustamenti. \\
+		Un altro esempio è STDM, noto come packet switching.
+		\subsubsection{Multiplexing a divisione di codice}
+		CDM (Code Division Multiplexing): è una forma di comunicazione a spettro distribuito in cui un segnale a banda stretta viene sparso su una banda di frequenza più ampia. Le trasmissioni simultanee vengono separate usando la teoria dei codici. CDMA (code division multiple access) è in grado di estrarre il segnale e rifiutare il resto come rumore casuale. \\
+		Il funzionamento di CDMA è semplice: il tempo di trasmissione di ogni bit è suddiviso in m intervalli, chiamati chip. Ad ogni stazione viene assegnato un chip sequence (sequenza di chip). Per trasmettere un bit con un valore 1 una stazione invia la sua sequenza di chip, per trasmettere uno 0 la sua negazione. \\
+		Esempio: chiamano S il vettore di m chip della stazione s, e $\overline{\rm S}$ la sua negazione. Tutte le sequenze di chip sono ortogonali a coppie, ossia il prodotto interno normalizzato di ogni coppia distinta di sequenze di chip S e T è zero. Questa sequenza di chip viene generata usando il codice di Walsh.\\
+		Quando due stazioni trasmettono contemporaneamente le loro sequenze bipolari si sommano linearmente. \\
+		Per recuperare la sequenza di bit generata da una certa stazione, il ricevente deve innanzitutto conoscere in anticipo la sequenza di chip di quella stazione e calcolare il prodotto interno normalizzato tra la sequenza di chip ricevuta e quella della stazione mittente. 
+		\subsection{La rete telefonica pubblica commutata}
+		Per poter comunicare con tutto il mondo è possibile usare sistemi di telecomunicazione esistenti. Ad esenpio, la PSTN (public switched telephone network)
+		\subsubsection{Struttura del sistema telefonico}
+		Inizialmente, veniva usata una rete interamente connessa: per poter comunicare con n destinatari, il mittente doveva tirare n cavi, uno per ogni destinatario. \\
+		Bell risolvì questo problema, creando uffici di commutazione. La società stendeva cavi dalle case alla commutazione. Per effettuare una chiamata, si chiamava l'ufficio dell'azienda telefonica e un operatore creava un ponte tra il mittente e il destinatario. Per collegare più città venivano usate centraline di secondo livello.\\
+		Le connessioni tramite doppine tra ogni telefono e la centrale sono chiamate local loop.\\
+		Se i due interlocutori sono collegati alla stessa centrale locale, il meccanismo di commutazione crea una connessione elettrica diretta, che rimane attiva fino al termine della chiamata.\\
+		Se invece sono situati in 2 differenti centrali locali, si attua una chiamata interurbana. Ogni centrale ha diverse linee in uscita che conducono a uno o più centri di commutazione chiamati centrali interurbane. Queste linee sono chiamate linee di connessione interurbana. Se la centrale locale e quella del chiamato hanno una linee di connessione diretta verso la stessa centrale interurbana, è in quest'ultima che si può stabilire una connessione. \\
+		Le centrali interurbane comunicano tra loro mediante intertool trunk, linee a banda larga. Esistono meccanismi di instradamento flessibili e non gerarchici (in precedenza era gerarchico). \\
+		In passato la trasmissione era analogica, ora tutte le linee e i commutatori sono digitali, solo l'ultimo miglio è ancora analogico. \\
+		La tramissione digitale è preferibile, perchè basta poter distinguere uno 0 da un 1 invece che riprodurre in modo accurato una forma d'onda.
+		\subsubsection{Politiche telefoniche}
+		Dal 1995 ogni società può offrire ai propri clienti un singolo pacchetto integrato, comprendente TV via cavo, telefonia e servizi d'informazione. È imposta l'implementazione  di portabilità del numero locale.
+		\subsubsection{Collegamenti locali: modem, ADSL, fibre}
+		Il collegamento locale è l'ultimo miglio.
+		\paragraph{Modem telefonici.} Per spedire dei bit questi devono essere convertiti in segnali analogici. \\ i
+		Un modem (modulatore demodulatore) converte un flusso di bit in analogico. Può essere interno od esterno ad un computer. Un modem si colloca tra tra il computer e il sistema telefonico. \\ 
+		Un modem telefonico permette di inviare bit tra due computer su una linea telefonica. Per ridurre gli errori, gli standard impolgono alcuni simboli per la correzione degli errori, ad esempio TCM (Trellis Coded Modulation).\\
+		Lo standard V.32 usa una costellazione a 32 punti per condividere 4 bit di dati, e 1 bit di controllo per ogni simbolo. Esistono anche V.90 e V.92.
+		\paragraph{Linee DSL} Gli xDSL sono offerte che promettono più banda della connessione telefonica. Un esempio è l'ADSL.\\
+		La linea in ingresso viene collegata a un commutatore che non presenta il filtro usato nelle comunicazioni vocali. Questo permette una maggiore velocità di trasmissione perchè rende disponibile l'intera capacità del collegamento locale. \\
+		La capacità del collegamento locale dipende anche dalla lunghezza, il diametro dei cavi e la sua qualità.\\ 
+		I servizi xDSL devono funzionare su doppini Cat.3 esistenti, non devono influenzare i dispostivi telefonici, ed è molto più veloce della connessione a 56kbps. Hanno un costo mensile indipendentemente dal tempo di utilizzo. \\
+		Per trasmettere dati su questi canali viene usata la tecnica OFDM, chiamata in questo contesto DMT (discrete multitone). Il canale viene usato per il POTS (il servizio telefonico), i canali da 1 a 5 funzionano come guardia (non vengono utilizzati per evitare interferenze), 1 canale è usato per controllare il canale in upstream, uno per quello in downstream, mentre i rimanenti 248 sono utilizzati per trasmettere i dati degli utenti.\\
+		Per evitare interferenze, 32 canali vengono usati per la trasmissione e i rimanenti per la ricezione. Da questo fatto deriva il termine ADSL (Asymmetric DSL).\\
+		Una configurazione ADSL si effettua nel seguente modo: un tecnico installa nell'edificio del cliente un NID (Network Interface Device). Accanto al NID c'è uno splitter, filtro analogico che divide i dati della banda da 0 a 4000 Hz, usata da POTS da quella dei dati. I dati sono instradati verso un modem ADSL. \\
+		Lo svantaggio è che è necessario un intervento di un tecnico per installare il NID e lo splitter. 
+		\paragraph{FTTH - Fiber to to home} Questa tecnologia permette una velocità di accesso fino a 100 Mbps. L'ultimo miglio in fibra è passivo, non è necessario utilizzare apparati attivi per amplificare o elaborare il segnale. \\
+			Dato che le fibre provenienti dalle case sono unite tra loro (ad esempio, una fibra parte dalla centrale e arriva a 100 abitazioni), vengono utilizzati dei splitter (separatori ottici) che dividono il segnale proveniente dalla centale locale alle varie abitazioni. Questa architettura si chiama PON (passive optical network): si una sola lunghezza d'onda per tutte le abitazioni per la trasmissione in upstream e un'altra per la trasmissione in downstream.\\
+			È necessario però definire un protocollo di comunicazione: non è possibile che gli utenti inviino un messaggio nello stesso momento, perchè potrebbero collidere, e non possono ascoltare a vicenda le proprie trasmissioni (quindi non possono controllare il canale prima di effettuare la trasmissione. È necessaria una sincronizzazione tra apparato locale e centrale.
+			\subsubsection{Trunk e multiplexing} 
+			Un trunk è un segmento principale di una rete telefonica e permette di collegare tra loro i centri di commutazione. Differiscono dall'ultimo miglio sia dalla velocità (offrono una maggiore velocità), sia dalla dimensione (trasportano tantissime chiamate simultaneamente). Inoltre la parte interna della rete trasporta informazioni digitali e non analogiche, quindi è necessaria una conversione alla centale locale per trasmettere sui trunk a lunga distanza. \\
+			\paragraph{Digitalizzazione di segnali vocali} I segnali analogici sono digitalizzati da un codec, dispositivi che estra 8000 SWAG campioni al secondo. Questa tecnica è chiamata PCM (Pulse Code Modulation).All'altro capo viene ricreato un segnale analogico dai campioni quantizzati. \\
+			I livelli di quantizzazione sono distanziati tra loro in maniera non uniforme secondo una scala logaritmica per evitare errori.
+			\paragraph{Time division multiplexing}
+			vedi libro...
+			\subsubsection{Commutazione}
+			\paragraph{Commutazione di circuito}
+			Quando una chiamata passa attraverso una centrale di commutazione, viene stabilita una connessione fisica tra la linea di provenienza della chiamata e una linea di uscita.\\
+			Inizialmente, un operatore creava la connessione. Ora c'è una macchina.\\
+			È necessario configurare un percorso da un punto all'altro prima di iniziare a trasmettere i dati. 
+			
+			\paragraph{Commutazione di pacchetto}
+			È un'alternativa alla commutazione di circuito. I pacchetti vengono inviati non appena sono disponibili. Non c'è un percorso stabilito in anticipo, quindi i pacchetti possono anche arrivare in ordine disordinato e se un commutatore si blocca è possibile aggirarlo. È necessario fissare un limite superiore alla dimensione dei pacchetti, per evitare una monopolizzazione del sistema. \\
+			Non c'è prenotazione di banda, quindi può accadere un ritardo di accomodamento e congestione della rete se molti pacchetti vengono spediti nello stesso momento.  È più efficente in quanto non viene sprecata banda.\\
+	\subsection{Il sistema telefonico mobile}
+	Il sistema telefonico è usato per comunicazioni a grande distanza, sia vocali che dati. Si sono successe 3 generazioni:
+	\begin{enumerate}
+		\item 1G: voce analogica
+		\item 2G: voce digitale
+		\item 3G: voce e dati digitali 
+	\end{enumerate}
+	Attualmente c'è la generazione 4G.
+	Il primo sistema mobile è stato sviluppato negli USA, e funzionava per tutto il territorio statunitense.\\ Ora gli USA usano due sistemi digitali mobili, incompatibili tra loro. In USA i telefoni cellulari sono mischiati ai telefoni fissi, e i possessori di telefoni cellulari pagano le chiamate in arrivo.\\
+	In Europa, sebbene inizialmente ogni stato aveva un proprio sistema analogico cellulare, ora c'è un unico sistema digitale. Questo ha permesso una diffusione più grande rispetto agli Stati Uniti. In Europa c'è un ampio uso delle schede prepagate, e i telefoni cellulari non sono mischiati ai telefoni fissi (è semplice capire se il chiamante sta chiamando da un telefono fisso oppure da un cellulare).
+	\subsubsection{Prima generazione (1G): voce analogica}
+	Nel 1946 venne creato il primo sistema telefonico per auto.
+	Veniva usato un sistema push-to-talk.\\
+	Negli anni '60, si iniziò ad utilizzare IMTS: un trasmettitore ad alta potenza veniva installato in una zona elevata e venivano usate 2 frequenze: una per la trasmissione ed una per la ricezione. Gli utenti non potevano ascoltarsi.
+	\paragraph{AMPS - advanced mobile phone system} Sistema inventato da Bell Labs nel 1982. In Inghilterra e in Italia veniva chiamatao TACS, e in Giappone LCS-LI. AMPS è stato si è ritirato nel 2008. \\
+	Nei sistemi mobili un'area geografica viene divisa in celle. In AMPS le celle sono grandi 10-20 km. Ogni cella utilizza delle frequenze non usate da quelle vicine. \\
+	Usando questo sistema ci sono stati molti miglioramenti: vengono gestite più chiamate contemporaneamente in una zona più ristretta rispetto ai sistemi precendenti, e le celle sono più piccole (quindi vengono usati trasmettitori e dispositivi più piccoli ed economici).\\
+	Le celle hanno tutte la stessa dimnesioni e sono organizzate in gruppi di 7, e ogni lettera indica un gruppo di frequenze. C'è un'area cuscinetto attorno ad ogni cella, per separare le frequenze.\\
+	Se il sistema si satura, è possibile usare microcelle più piccole per aumentare il riuso di frequenze, oppure usare microcelle temporanee utilizzando torri portatili. \\
+	Al centro di ogni cella c'è una stazione base. Questa stazione comunica con tutti i telefoni nella cella. La stazione è composta da un computer e da un trasmettitore/ricevitore collegato all'antenna. \\
+	Le stazioni base sono collegate ad un dispositivo chiamato MSC (mobile switch center). Possono esserci più MSC che comunicano tra loro mediante una rete a commutazione di pacchetto. \\
+	Ogni telefono è collegato in una specifica cella. Quando si allontana dalla cella, la stazione trasferisce la gestione dell'apparecchio alla cella che riceve il segnale più forte. Questo processo è chiamato handoff.
+	\paragraph{Canali} 
+ 	AMPS usa FDM. Usa 832 canali full duplex, ognuno costituito da canali simplex (FDD, Frequency Division Duplex). I canali sono divisi in 4 categorie:
+ 	\begin{enumerate}
+ 		\item controllo per gestire il sistema
+ 		\item paging per avvisare gli utenti mobili di chiamate in arrivo
+ 		\item accesso per impostare la chiamata e l'assegnazione del canale
+ 		\item dati per vece, fax o dati.
+ 	\end{enumerate}
+	\paragraph{Gestione delle chiamate} Ogni telefono mobile possiede un numero seriale (32 bit) e un numer.o telefonico di 10 cifre, registrato nella memoria. \\
+	Il numero telefonico è composto da prefisso (3 cifre) e il numero vero e proprio (7 cifre).\\ All'accensione il telefono cerca il segnale più potente e trasmette a questo i 2 numeri sottoforma di pacchetto digitale, più volte e con un codice di correzione degli errori. La stazione base aggiorna l'MSC, che registra la presenza del cliente, e informa l'MSC principale del cliente. \\
+	I telefoni inattivi rimangono in ascolto sul canale di trasferimento per rilevare eventuali messaggi inviati a loro. 
+	\subsubsection{Seconda generazione (2G)}
+	Con questa generazione abbiamo un guadagno di capacità trasmissiva grazie alla digitalizzazione e compressione della voce. È possibile inviare sms.
+	\paragraph{GSM} GSM (Global System for Mobile communications) è diventato lo standard europeo per il 2G. Mantiene l'handoff e la struttura a celle. \\
+	Il terminale mobile GSM è diviso in dispositivo e chip chiamato SIM. La SIM permette al telefono di funzionare correttamente ed è usata anche come supporto di memorizzazione. La SIM scambia dati con la rete per permettere l'identificazione. \\
+	Il telefono parla con la stazione base mediante una air interface.\\
+	Le stazioni base sono collegate a un BSC che gestisce le risorse radio delle celle e gli handoff. \\
+	Il BSC è collegato ad un MSC che instrada le chiamate e si connette alla PSTN.\\
+	Un database chiamato VLR permette all'MSC di sapere dove sono i dispositivi. HLR invece permette di instradare le chiamate in arrivo verso le giuste posizioni.  
+	\subsubsection{Terza generazione (3G)}
+	\subsection{Televisione via cavo}
+	\subsubsection{Televisione ad antenna collettiva}
+	\subsubsection{Internet via cavo}
+	\subsubsection{Allocazione dello spettro}
+	\subsubsection{Cable modem}
+	\subsubsection{ADSL o connessione via cavo?}
+	
+	
+\newpage
+	
+	
+	
+\section{Il livello data link}
+\subsection{Progettazione del livello data link}
+Permette di:
+\begin{enumerate}
+\item fornire un'interfaccia di servizio per il livello di rete
+\item gestire gli errori di trasmissione
+\item gestire il flusso di dati
+\end{enumerate}
+Data Link incapsula i pacchetti del livello di rete in frame. Ogni frame contiene una intestazione, una sezione per contenere il pacchetto ed una sequenza di chiusura. 
+\subsubsection{Servizi forniti al livello di rete}
+Il livello data link offre questi servizi al livello rete:
+\begin{enumerate}
+\item servizio senza conferma senza connessione: sorgente invia dei frame indipendenti alla destinazione, senza conferma dell'avvenuta ricezione. Usato quando la frequenza degli errori di trasmissione è molto basso (Ethernet).
+\item servizio con conferma senza connessione: ciascun frame è inviato individualmente ma ne viene data conferma di ricezione. Usato sulle connessione Wi-Fi.  
+\item servizio con conferma orientato alla connessione: viene stabilita una connessione prima di iniziare a trasferire i dati. Garantito l'ordine dei pacchetti, usato su canali satellitari. Il trasferimento avviene in 3 fasi: stabilire connessione, trasmissione, rilascio connessione.
+\end{enumerate}
+\subsubsection{Suddivisione in frame} 
+Data Link suddivide il flusso di bit in una serie di frame. Per ogni frame calcola un checksum (inserito poi all'interno del frame). Per verificare che non ci sono stati errori, il destinatario ricalcola il checksum e lo controlla con quello inviato.
+Per facilitare al destinatario la suddivisione in frame ci sono 4 metodi:
+\begin{enumerate}
+\item conteggio dei byte: un campo dell'intestazione usato per specificare il numero di byte nel frame. Il problema è che il campo può essere compromesso da un errore di trasmissione.
+\item flag byte con byte stuffing: inseriti byte speciale all'inizio e alla fine di ogni frame, chiamati flag byte. Se il flag byte compare nei dati, si usa un byte di escape prima di ogni occorrenza accidentale del flag byte. 
+\item flag bit con bit stuffing: simile al byte stuffing ma a livello di bit: ogni frame inizia e finisce con una sequenza di bit specifica, ogni 5 bit 1 consecutivi viene inserito uno 0. Usato da USB.
+\item violazioni della codifica del livello fisico: si possono usare segnali riservati per indicare l'inizio e la fine di un frame usando un code violation.
+
+\end{enumerate}
+\subsubsection{Controllo degli errori}
+Il protocollo richiede che la destinazione invii sulla rete dei frame di controllo contenenti un ACK. Viene anche introdotto un timer: quando la sorgente invia un pacchetto, fa partire un timer. Se la sorgente non riceve l'ACK entro la scadenza del timer, vuol dire che la il frame è andato perso e verrà reinviato. \\
+Ogni frame ha un numero di sequenza.
+\subsubsection{Controllo di flusso}
+Il controllo del flusso viene attuato mediante feedback (destinazione manda permesso alla sorgente di inviare altri dati) o tramite limitazione del tasso di invio.
+\subsection{Rilevazione e correzione degli errori}
+Per poter combattere gli errori di trasmissione, vengono usate 2 strategie:
+\begin{enumerate}
+\item includere informazioni ridondanti per permettere al destinatario di dedurre i dati spediti (codici a correzione di errore)
+\item includere informazioni per permettere al destinatario di capire se i dati contengono errori, e richiedere una nuova trasmissione (codici a rilevazione d'errore).
+\end{enumerate}
+Nella fibra ottica (canale affidabile) è meglio usare i secondi. \\
+Su canali ad alto tasso di errore (wifi ad esempio) è meglio usare i primi.\\
+\subsubsection{Codici a correzione di errore}
+\begin{enumerate}
+\item codice di Hamming
+\item codice convoluzionale binaria
+\item codice di Reed-Solomon
+\item codice a controllo a bassa priorità
+
+\end{enumerate}
+Un frame consiste di m+r bit, dove m sono il numero di bit di dati e r il numero di bit di controllo.\\
+In un codice a blocco, gli r bit di controllo sono calcolati in funzione degli m bit di dati. \\
+In un codice sistematico, gli m bit di dati sono trasmessi insieme a quelli di controllo.\\
+In un codice lineare gli r bit di controllo sono una funzione lineare degli m bit di dati quali lo XOR o la somma modulo 2. \\
+Il codice di un frame lo identifichiamo con codice(n,m). \\
+Un'unità di n bit che contiene sia dati che controllo è chiamato codeword di n bit. \\
+Date 2 sequenze, il numero di bit corrispondenti diversi nelle 2 sequenze è detto disanza di Hamming. Se 2 parole di codice sono a distanza Hamming d una dall'altra, saranno necessari d erori su singoli bit per convertire una sequenza nell'altra.\\
+Per trovare d errori è necessaria una codifica con distanza d+1.\\
+Per correggere d errori, è necessaria una codifica con distanza 2d+1\\
+Se abbiamo m bit di messaggio, è possibile fissare un limite inferiore al numero di bit di controllo usando la disuguaglianza:
+\begin{equation}
+	(m+r+1)<= 2^r
+\end{equation}
+In Hamming, i bit della parola di codice vengono numerati. I bit che sono una potenza di 2 vengono usati come bit di controllo, i restanti sono gli m bit di dati. \\
+Ogni bit di controllo forza la somma modulo 2 o parità di alcuni bit di dati (incluso se stesso) ad essere pari (o dispari). \\ Un bit può essere incluso in più calcoli di bit di controllo.\\
+UN bit di dati è controllato solo dai bit di controllo presenti nella sua espansione in somma di potenze di 2. \\
+Il destinatario ricalcola i bit di controllo, includendo i valori di quelli appena ricevuti: i bit ottenuti prendono il nome di check result. Se tutti i bit del check result sono 0, allora la parola è valida. \\
+L'insieme dei risultati di controllo forma la sindrome d'errore.\\
+I codici di Hamming sono utilizzati nei dispositivi di memorizzazione.\\
+Il codice convoluzionale non fissa a priori una dimensione del messaggio, l'output dipende dai di input correnti e da quelli precedenti. Il numero di bit precedenti su cui si basa la codifica è chiamato lunghezza dei vincoli del codice. \\
+Vengono utilizzati nelle reti GSM, e nelle comunicazioni satellitari. \\
+I codici di Reed Solomon operano a gruppi di m simboli di bit, e si basano sul fatto che un polinomio di grado n è univocamente determinato da n+1 punti. Questi codici infatti sono definiti come polinomi che operano su campi finiti. Con simboli di m bit le parole sono lunghe $2^m-1$. Se poniamo m = 8 abbiamo che i simboli sono byte, e una parola è lunga 255 byte. Vengono usati nelle DSL, nei CD e nei DVD.Sono anche usati in combinazione con altri codici.\\
+Il codice LDPC (low-density parity check) definisce che ogni bit di output è formato solo da una frazione dei bit in input. Le parole ricevute vengono decodificate con un algoritmo di approsimazione.
+\subsubsection{Codici a rilevazione di errore}
+\begin{enumerate}
+\item Parità: un bit di parità viene aggiunto in coda ai dati, in modo tale che il numero di 1 nella parola sia dispari o pari. Con un singolo bit di parità, abbiamo un codice con distanza 2, ed è in grado di rilevare errori su singoli bit.\\
+Per poter rilevare anche errori a burst viene usata una tecnica chiamata interleaving. Se consideriamo ogni blocco da inviare come una matricec n*m, con questa tecnica possiamo calcolare il bit di parità per ognuna delle n colonne e trasmettiamo i bit come m righe. Come ultima riga abbiamo i bit di parità.\\
+\item checksum: usato per indicare un gruppo di bit di controllo associati al messaggio. 
+\item: CRC (Cyclic Redundancy Check, o codifica polinomiale): sequenze di bit vengono viste come dei polinomi a coefficienti, che possono assumere solo i valori 0 e 1.\\
+La sorgente e la destinazione devono mettersi d'accorso su un polinomio generatore, G(x). G(x) deve avere i bit di ordine più alto e più basso pari a 1.\\
+Per calcolare il checksum di un frame di m bit (visto come un polinomio M(x)), questo frame deve essere più lungo del polinomio generatore. L'algoritmo per calcolare il checksum è il seguente:
+\begin{enumerate}
+\item se r è il grado di G(x), aggiungiamo r bit con valore 0 dopo la parte di ordine più basso del frame, così che contenga m + r bit (polinomio $x^RM(x)$).
+\item dividiamo la sequenza di $x^RM(x)$ per la sequenza di G(x), usando la divisione modulo 2.
+\item sottraiamo il resto (che contiene massimo r bit) dalla sequenza di $x^RM(x)$ usando la sottrazione modulo 2. Il risultato è il frame di checksum T(x).
+\end{enumerate}
+Ci sono polinomi diventati standard internazionali, come quello di Ethernet, che permette di rilevare tutti gli errori di burst di lunghezza pari o minore a 32 bit.
+\end{enumerate}
+\subsection{Protocolli data link elementari}
+I processi del livello fisico e alcuni del livello data link vengono eseguiti su una NIC (scheda di rete) oppure sulla CPU sottoforma di device driver. Quando il livello data link accetta un pacchetto, lo incapsula in un frame aggiungendo un'intestazione (header) e una coda (trailer). Quando un frame arriva a destinazione, l'hardware ne calcola il checksum. \\
+Una dichiarazione comune di un protocollo è composta da 5 strutture dati:
+\begin{enumerate}
+\item boolean
+\item seq\_nr, numero intero usato per numerare i frame
+\item packet, unità di informazione che viene scambiata fra il livello di rete e quello data link
+\item frame, composto da 4 campi: kind (indica se ci sono dati nel frame), seq (numeri di sequenza), ack (acknowledgement) (questi primi 3 sono definiti come frame header in quanto di controllo), e info (i dati da trasferire). 
+\item frame\_kind
+\end{enumerate}
+Alcune funzioni di libreria sono le seguenti:\\
+\begin{tabular}{|l | c | r}
+	\hline
+	void wait\_for\_event(event\_type *event) & aspetta che accada un evento \\ \hline
+	void from\_network\_layer(packet *p) & prende un pacchetto dal liv. rete\\ \hline
+	void to\_network\_layer(packet *p) & porta il pacchetto arrivato al liv. rete \\ \hline
+	void from\_physical\_layer(frame *r) & prende un frame dal liv. fisico e lo copia in r \\ \hline
+	void to\_physical\_layer(frame *s) & passa il frame al liv. fisico \\ \hline
+	void start\_timer(seq\_nr k) & fa partire l'orologio, e abilita l'evento di timeout \\ \hline
+	void stop\_timer(seq\_nr k) & ferma l'orologio, e disabilita l'evento di timeout \\ \hline
+	void start\_ack\_timer(void) & fa partire il timer ausiliario, e abilita ack\_timeout \\ \hline
+		void stop\_ack\_timer(void) & stoppa il timer ausiliario, e disabilita ack\_timeout \\ \hline
+		void enable\_network\_layer(void) & abilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
+		void disable\_network\_layer(void) & disabilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
+\end{tabular}
+\subsubsection{Un protocollo simplex utopistico}
+Questo protocollo permette la trasmissione dei dati in una sola direzione. Viene assunto che il canale sia privo di errori, e che la destinazione possa elaborare l'input a velocità infinita. La sorgente invia i dati alla velocità massima.\\
+Non è necessario specifica ACK e MAX\_SEQ perchè può arrivare solo un frame intatto (frame\_arrival).
+\begin{lstlisting}[language=C, caption=simplex utopistico]
+void sender1(void){
+	frame s;
+	packet buffer;
+	
+	while(true){
+		from_network_layer(&buffer);
+		s.info = buffer;
+		to_physical_layer(&s);
+	}
+}
+
+void receiver1(void){
+	frame r;
+	event_type event;
+	
+	while(true){
+		wait_for_event(&event);
+		from_physical_layer(&r);
+		to_network_layer(&r.info);
+	}
+}
+\end{lstlisting}
+\subsubsection{Un protocollo simplex stop-and-wait per un canale privo di errori}
+Come gestire il traffico? Il destinatario deve mandare feedback al mittente.  Dopo aver passato il pacchetto al liv. network, il destinatario invia un pacchetto dummy al mittente.  Il mittente è obbligato ad aspettare finchè non riceve il pacchetto dummy di ACK. 
+\begin{lstlisting}[language=C, caption=simplex stop-and-wait senza errori]
+void sender1(void){
+	frame s;
+	packet buffer;
+	event_type event;
+	while(true){
+		from_network_layer(&buffer);
+		s.info = buffer;
+		to_physical_layer(&s);
+		wait_for_event(&event);
+	}
+}
+
+void receiver1(void){
+	frame r,s;
+	event_type event;
+	
+	while(true){
+		wait_for_event(&event);
+		from_physical_layer(&r);
+		to_network_layer(&r.info);
+		to_physical_layer(&s);
+	}
+}
+\end{lstlisting}
+\subsubsection{Protocollo simplex stop-and-wait per un canale soggetto a rumore}
+In questo caso possono verificarsi errori: il pacchetto può venire danneggiato o addirittura perso. \\
+Come procedere? Viene aggiunto un timer, e un metodo per permettere alla destinazione di distinguere i frame che vede per la prima volta. \\
+Se il frame m viene perso o danneggiato, viene inviato l'ACK corrispondente al pacchetto precedente. 
+\begin{lstlisting}[language=C, caption=simplex stop-and-wait con canale con errori]
+#define MAX_SEQ 1
+
+void sender3(void){
+	seq_nr next_frame_to_send;	
+	
+	frame s;
+	packet buffer;
+	event_type event;
+	
+	next_frame_to_send = 0;
+	from_network_layer(&buffer);
+	
+	while(true){
+		s.info = buffer;
+		s.seq = next_frame_to_send;
+		to_physical_layer(&s);
+		start_timer(s.seq);
+		wait_for_event(&event);
+		if(event == frame_arrival){
+			from_physical_layer(&s);
+			if(s.ack == next_frame_to_send){
+				stop_timer(s.ack);
+				from_nextwork_layer(&buffer);
+				inc(next_frame_to_send);
+			}
+		}
+	}
+}
+	
+void receiver3(void){
+	seq_nr frame_expected;
+	frame r,s;
+	event_type event;
+	
+	while(true){
+		wait_for_event(&event);
+		if(event == frame_arrival){
+			from_physical_layer(&r);
+			if(r.seq == frame_expected){		
+				to_network_layer(&r.info);
+				inc(frame_expected);
+			}
+			s.ack = 1 - frame_expected;
+			to_physical_layer(&s);
+		}
+	}
+}
+\end{lstlisting}
+\subsection{Protocolli a finestra scorrevole}
+I protocolli precedenti erano simplex(i dati venivano trasmessi solo in una direzione). \\
+Sarebbe meglio trasmettere in duplex (entrambe le direzioni).\\
+Ci sono diversi modi per farlo: o si usano 2 canali separati, uno per l'andata (dati) e uno per ritorno (ack) (ma in questo modo la banda del canale di ritorno risulterebbe sprecata), oppure usare un unico canale per entrambe le direzioni. \\
+È possibile fare questo usando una tecnica chiamata piggybacking (ritardare gli ack in uscita ed agganciarli al successo frame di dati trasmesso). \\
+Se il pacchetto da inviare arriva rapidamente, allora viene fatt o piggybacking, sennò l'ack viene inviato da solo. \\
+Particolari protocolli sono i protocolli a finestra scorrevole. In ogni istante la sorgente memorizza un insieme di numeri di sequenza, che corrispondono ai frame che è autorizzata a inviare. I frame che possono essere inviati si trovano sulla finestra di invio. La destinazione tiene traccia della finestra di ricezione (frame che è autorizzata a ricevere). Queste finestre possono avere dimensione fissa oppure variabile. \\
+Quando arriva un nuovo pacchetto dal livello di rete, gli viene assegnato il numero di sequenza successivo e la finestra viene incrementata di 1. Quando arriva un ACK, viene incrementato di 1 il limite inferiore della finestra. \\
+È necessario mantenere un buffer della stessa dimensione della finestra per mantenere in memoria eventuali frame persi o danneggiati durante la trasmissione e cha vanno spediti di nuovo. \\
+In ricezione, se arriva un frame con un numero di sequenza non compreso nella finestra, questo frame viene scartato. \\
+Se la dimensione della finestra è 1, i frame arrivano sempre nella giusta sequenza. \\
+\subsubsection{Un protocollo a finestra scorrevole a 1 bit}
+Questo protocollo utilizza il metodo stop-and-wait. La sorgente invia un frame e poi aspetta di ricevere l'ACK prima di inviare il successivo.\\
+\begin{lstlisting}[language=C, caption=protocollo a finestra scorrevole a 1 bit]
+#define MAX_SEQ 1 /*la finestra ha dimensione 1*/
+
+void protocol4(void){
+	seq_nr next_frame_to_send;	
+	seq_nr frame_expected;
+	
+	frame r, s;
+	packet buffer;
+	event_type event;
+	
+	next_frame_to_send = 0;
+	frame_expected = 0;
+	from_network_layer(&buffer);
+	s.info = buffer;
+	s.seq = next_frame_to_send;
+	s.ack = 1 - frame_expected; /* ack in piggybacking*/
+	to_physical_layer(&s);
+	start_timer(s.seq);
+	
+	while(true){
+		wait_for_event(&event);
+		if(event == frame_arrival){
+			from_physical_layer(&r);
+			if(r.seq == frame_expected){
+				to_network_layer(&r.info);
+				inc(frame_expected);
+			}
+			if(r.ack == next_frame_to_send){
+				stop_timer(r.ack);
+				from_nextwork_layer(&buffer);
+				inc(next_frame_to_send);
+			}
+		}
+		s.info  = buffer;
+		s.seq = next_frame_to_send;
+		s.ack = 1 - frame_expected;
+		to_physical_layer(&s);
+		start_timer(s.seq);
+	}
+}
+\end{lstlisting}
+\subsubsection{Un protocollo che usa go-back-n}
+Per permettere alla sorgente di non aspettare l'ACK, è possibile mandare un numero w di frame maggiore di 1. Gli ACK arriveranno per i frame precedenti prima che la finestra si riempi. \\
+Per calcolare l'opportuno w, si calcola la bandwith-delay product (banda (bit/s) del canale * tempo di transito in una direzione). Dividendo questa grandezzza per il numero di bit per frame si ottiene il numero di frame (BD). w deve essere pari a 2BD + 1.\\
+Per piccole finestre, a volte la sorgente rimarrà bloccata e quindi l'utilizzazione sarà inferiore al 100$\%$.\\
+La tecnica che consiste nel tenere più frame in viaggio viene chiamata pipeling.
+Per ripristinare gli errori in presenza di pipeling sono previsti due approcci.
+Il primo è go-back-n: la destinazione scarta tutti i frame successivi all'errore, senza mandare l'ACK per questi frame scartati (finestra di ricezione di dimensione 1).\\
+(vedi libro per l'implementazione, pag. 222-223)\\
+La sorgente può trasmettere fino a MAX\_SEQ senza dover aspettare un ACK. Il livello di rete scatena un evento network\_layer\_ready quando c'è un pacchetto da inviare. Quando arriva l'ACK per il frame n, anche i frame precedenti hanno l'ACK (cumulative acknowledgement). 
+\subsubsection{Un protocollo che usa selective-repeat}
+L'altra strategia è chiamata selective-repeat (pag.226/227 per l'implementazione).\\
+Sorgente e destinazione mantengono una finestra di numeri di sequenza accettabili. La finestra sorgente ha dimensione variabile, da 0 a max, mentre la destinazione ha un buffer di dimensione fissa pari a max. La destinazione ha un buffer riservato per ogni numero di sequenza all'interno della sua finestra. Ad ogni buffer  è associato un bit (arrrival) che identifica quando il buffer è pieno o vuoto. Quando arriva un frame viene controllato che il numero di sequenza si trovi all'interno della finestra. \\
+Il frame, prima di essere passato al livello rete, viene trattenuto finchè tutti i frame con numeri di sequenza inferiori siano stati ricevuti e passati al liv. network (per garantire l'ordine). \\
+La ricezione non è sequenziale. Questo comporta a dei problemi, ad esempio l'invio di una sequenza di frame già ricevuta.\\
+Per risolvere questo problema, dobbiamo essere sicuri che quando la destinazione ha portato avanti la sua finestra non ci siano sovrapposizioni con la finestra della sorgente. Per risolvere questo problema, si pone come dimensione massima della finestra (MAX\_SEQ+1)/2.\\
+Per evitare che il protocollo si blocchi quando la finestra della sorgente si sarà riempita, viene fatto partire un timer ausiliario dopo l'arrivo di una sequenza di frame. Se scade il timer, viene inviato un ACK di ritorno.\\
+Se la destinazione sospetta un errore, viene inviato un NAK (negative ACK), necessario per rispedire il frame.
+\subsection{Esempi di protocolli data link}
+Analizziamo ora protocolli data link su collegamenti punto a punto di Internet. Questo tipo di protocolli è chiamato PPP (Point to Point Protocol).\\
+\subsubsection{Pacchetti su SONET}
+SONET è il protocollo di liv. fisico usato nei collegamenti in fibra ottica delle WAN.\\
+È necessario disporre di meccanismi di framing che distinguano i pacchetti occasionali dal flusso di bit continuo in cui vengono trasportati. \\
+Il protocollo PPP ha 3 caratteristiche:
+\begin{enumerate}
+\item un metodo di framing, che permette di delimitare la fine e l'inizio di un frame.
+\item protocollo per gestire la connessione, ad esempio il test della linea o le opzioni di collegamento, e gestire la disconnessione (LCP, Link Control Protocol).
+\item modalità per negoziare le opzioni relative al livello di rete, in modo indipendente dall'implementazione. \\
+\end{enumerate}
+Il formato del frame PPP assomiglia a quello HDLC.\\
+PPP è orientato ai byte e usa il byte stuffing, fornisce trasmissioni affidabili anche nel caso di canali soggetti a rumore. \\
+Formato frame PP:
+\begin{enumerate}
+\item flag byte standard HDLC (0x7E)
+\item Address, impostato a 11111111.
+\item Control, default 00000011 (frame senza numero).
+\item Protocol, per comunicare quale tipo di pacchetto è contenuto nel campo payload. 
+\item Payload, lunghezza  variabile.
+\item Checksum, 2 o 4 byte. (CRC)
+\item Flag di chiusura.
+\end{enumerate}
+Il collegamento PPP deve essere stabilito e configurato. Le fasi di attivazione sono:
+\begin{enumerate}
+\item DEAD, liv. fisico non esiste connessione.
+\item ESTABILISH, stabilita connessione ottica.
+\item AUTHENTICATE, sorgente e destinazione possono verificare le proprie identità.
+\item NETWORK, fase di configurazione del liv. rete
+\item OPEN, trasmissione di pacchetti IP in frame PPP su linea SONET. 
+\item TERMINATE, fine trasmissione.
+\end{enumerate}
+\subsubsection{ADSL}
+L'ADSL utilizza diversi protocolli. Questi protocolli si basano su OFDM (multiplazione a divisione di frequenza ortogonali).\\
+Viene utilizzato PPP. A metà tra l'ADSL e PPP troviamo ATM, un livello data link che si basa su celle di informazione a lunghezza fissa. Non è necessario, come in SONET, che le celle vengano inviate secondo un flusso continuo e sincrono di bit, ma solo quando bisogna necessariamente comunicare. \\ ATM è orientato alla connessione; ogni cella possiede un identificatore di circuito virtuale, che viene usato per indirizzare la cella lungo il percorso di una connessione già stabilita. Per spedire dei dati è necessario associarli a una sequenza di celle. Il livello AAL5 si occupa di segmentare e riassemblare i dati. AAL5 al posto di un'intestazione è dotato di un trailer contenente la lunghezza e un CRC di 4 byte. Un frame AAL5 può contenere byte di padding per rendere la lunghezza multiplo di 48 byte. \\
+Per la correzione degli errori oltre a CRC viene aggiunta alla codifica del liv. fisico di ADSL una codifica Reed-Solomon ed un ulteriore CRC.
+\newpage
+
+\section{Il sottolivello MAC}
+Il sottolivello MAC è la parte inferiore del liv. data link e riguarda soprattutto i canali broadcast. \\
+Le reti wireless si servono per la connessione di un canale ad accesso multiplo (broadcast), le WAN invece preferiscono le connessione punto a punto. \\
+\subsection{Problema dell'allocazione del canale}
+Come allocare un canale di trasmissione?
+\subsubsection{Allocazione statica del canale}
+Per allocare staticamente un canale, possiamo dividere la sua capacità usando FDM. Se ci sono N utenti, la larghezza di banda è divisa equamente in N parti. Non ci sono interferenze tra gli utenti (es stazione radio FM). \\
+Se ci sono meno di N utenti, si spreca parte dello spettro. Se ci sono più di N utenti, alcuni non potranno comunicare. \\
+Calcoliamo il ritardo medio T relativo alla spedizione di un frame su un canale con capacità C bps. Assumiamo che il tasso medio degli arrivi casuali sia $\lambda$ frame/s e che ogni frame abbia lunghezza variabile, con una media di 1/u bit. Il tasso di servizio del canale è uC.
+\begin{equation}
+	T = \frac{1}{uC - \lambda}
+\end{equation} 
+\\
+Dividiamo il canale in N sottocanali indipendenti, ognuno di capacità C/N bps. Il tasso medio d'ingresso sarà $\lambda$/N. Ricalcoliamo T:
+\begin{equation}
+	T = \frac{1}{u(C/N) - (\lambda /N)} = \frac{N}{uC - \lambda} = NT
+\end{equation} 
+\subsubsection{Ipotesi per l'allocazione statica di canali dinamici}
+Ci sono 5 premesse da fare:
+\begin{enumerate}
+\item Traffico indipendente: l'arrivo di ogni frame è indipendente dagli altri arrivi
+\item Canale singolo: la comunicazione avviene in un solo canale.
+\item Collisioni osservabili: possono verificarsi collisioni se 2 frame vengono trasmessi simultaneamente.
+\item Tempo continuo o diviso in intervalli.
+\item Rilevamento di portante o non rilevamento di portante.
+\end{enumerate}
+\subsection{Protocolli ad accesso multiplo}
+\subsubsection{ALOHA}
+Hawai, anni 70. Per connettere gli utenti delle varie isole al computer principale, vennero usate onde radio a corto raggio, dove ogni terminale utilizzava la stessa frequenza di upstream per spedire i frame al computer locale. \\
+\paragraph{ALOHA pure} Dopo che ogni stazione ha spedito il frame, il computer locale lo rispedisce in broadcast a tutte le stazioni. Una stazione trasmittente può ascoltare la trasmissione del coordinatore (hub) per controllare se il frame  è arrivato a destinazione.\\
+Se il frame è andato perso, il trasmettitore attende un tempo casuale prima di rispedirlo. Casuale perchè se più frame vengono rispediti nello stesso istante, alla prossima collisione cambieranno il loro tempo d'attesa e non collideranno.\\
+I sistemi dove più utenti condividono un canale in cui possono generarsi conflitti si chiamano sistemi a contesa. \\
+Tutti i frame utilizzati su ALOHA hanno la stessa lunghezza per massimizzare la capacità di trasporto del sistema. Se due frame occupano contemporaneamente il canale vengono danneggiati.\\
+In ALOHA puro una stazione non ascolta il canale prima di cominciare a trasmettere.
+La probabilità che k frame siano generati durante un dato tempo di frame è data dalla distribuzione di Poisson:
+\begin{equation}
+	Pr[k] = \frac{G^k e^{-G}}{k!}
+\end{equation}
+Un frame non entrerà in collisione se nessun altro frame sarà trasmesso nello stesso intervallo temporale.\\
+La probabilità di generare zero frame è $e^{-G}$. In un intervallo di due frame time (intervallo di tempo per trasmettere un frame di lunghezza standard e fissa), il numero medio di frame generati è pari a 2G. S = Ge$^{-2G}$.\\
+La capacità di trasporto massima si ha con G = 0,5 e con S=$\frac{1}{2e}$. Si spera di utilizzare al massimo il 18$\%$ del canale.
+\paragraph{ALOHA slotted}
+Per duplicare la capacità di ALOHA, viene diviso il tempo in slot (intervalli discreti), ognuno corrispondente ad un frame. Gli utenti devono concordarsi sui limiti degli intervalli.\\
+È possibile utilizzare una stazione che si occupa di emettere un segnale all'inizio di ogni intervallo. \\
+La probabilità che non ci sia altro traffico durante lo stesso intervallo occupato dal frame è pari a $e*{-G}$. Quindi S=Ge$^{-G}$.
+\\ALOHA ha il massimo con G=1, di cui la capacità di trasporto S è pari a $\frac{1}{e}$ (circa 36\%).\\
+La probabilità di una collisione sarà 1-e$^{-G}$. \\
+La probabilità che una trasmissione richieda esattamente k tentativi (quindi k-1 collisioni) sarà:
+\begin{equation}
+P[k] = e^{-G}(1-e^{-G})^{k-1}
+\end{equation}
+Il numero atteso di trasmissioni E sarà pari a:
+\begin{equation}
+E = \sum_{k=1}^\infty kP_k = e^G
+\end{equation}
+Piccole variazioni del carico del canale possono ridurre le sue prestazioni.\\
+\subsubsection{Protocolli ad accesso multiplo con rilevamento della portante}
+Abbiamo detto che con ALOHA slotted il massimo utilizzo del canale è di 1/e.\\
+Per fare meglio possiamo usare protocolli con rilevamento della portante (trasmissione), che permettono di controllare il canale per vedere se è occupato.\\
+\paragraph{CSMA persistente e non persistente}
+\paragraph{CSMA con rilevamento delle collisioni}
 \end{document}

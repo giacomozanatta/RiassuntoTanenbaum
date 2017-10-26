@@ -905,8 +905,7 @@ Ethernet classica usa CSMA/CD 1-persistente. \\
 Per determinare l'intervallo di tempo casuale di attesa prima della ritrasmissione dopo una collisione, il tempo viene diviso in intervalli discreti la cui lunghezza è uguale al tempo di propagazione di andata e di ritorno sul mezzo di trasmissione nel caso peggiore.\\
 Dopo una collisione la stazione attende casualmente 1 o 0 slot prima di ritrasmettere. Se due stazioni scelgono lo stesso numero avverrà una nuova collisione e si sceglierà tra 0, 1, 2 o 3 slot. Se avviene una terza collisione il numero prossimo di intervalli è compreso tra 0 e $2^3 -1$. Dopo 16 collisioni di seguito viene dato un errore. \\
 Questo algoritmo è chiamato backoff esponenziale binario, e permette di adattarsi dinamicamente al numero di stazioni che tentano di trasmettere. Se non ci sono collisioni si suppone che la comunicazione sia andata a buon fine (non viene fornita una conferma di ricezione). \\ Usata per mezzi a basso tasso d'errore (cavi di rame o fibra ottica). Per mezzi wireless viene usato un ACK.
-\subsubsection{Prestazioni di Ethernet}
-Supponiamo una probabilità costante di ritrasmissione ad ogni slot. Se ogni stazione trasmette in un intervallo con contesa con probabilità p, allora la probabilità A che qualche stazione acquisista il controllo del canale in quell'intervallo è:
+\subsubsection{Prestazioni di EthernetSupponiamo una probabilità costante di ritrasmissione ad ogni slot. Se ogni stazione trasmette in un intervallo con contesa con probabilità p, allora la probabilità A che qualche stazione acquisista il controllo del canale in quell'intervallo è:
 \begin{equation}
  A = kp(1-p)^{k-1}
 \end{equation}
@@ -937,8 +936,28 @@ Ci sono diverse cablature di fast Ethernet:
 \item 100Base-FX, fibra ottica, lunghezza max segmento: 2000m, Full Duplex a 100 Mbps (distanze elevate).	
 \end{enumerate}
 \subsubsection{Gigabit Ethernet}
-802.3ab. Come fast Ethernet, le comunicazioni sono punto a punto.
+802.3ab. Come fast Ethernet, le comunicazioni sono punto a punto. Gigabit Ethernet supporta due modalità operative: full duplex e half duplex. Si ha full duplex quando c'è uno switch centrale collegato ai computer. Non si verifica contesa, e non si usa CSMA/CD. La modalità half duplex si usa quando i computer sono collegati ad un hub e non a uno switch. Sono possibili collisioni, quindi è richiesto il protocollo CSMA/CD. \\
+Per migliorare questo standard, sono state aggiunte due funzionalità che consentono di avere una lunghezza massima del cavo fino a 200 metri:
+\begin{enumerate}
+\item carrier extension, per aggiungere dati di riempimento dopo il frame normale.
+\item frame bursting, permette a un trasmittente di inviare una sequenza concatenata di più frame in una singola trasmissione
+\end{enumerate}
+\begin{enumerate}
+\item 1000Base-SX, fibra ottica, lunghezza max segmento: 550m, fibra multimodale
+\item 1000Base-LX, fibra ottica, lunghezza max segmento: 5000m, fibra mono o multimediale
+\item 1000Base-CX, 2 coppie STP, lunghezza max segmento: 25m, doppino schermato
+\item 1000Base-T, 4 coppie UTP, lunghezza max segmento: 100m, UTP standard cat. 5	
+\end{enumerate}
+Gigabit Ethernet implementa il controllo del flusso, per evitare l'esaurimento del buffer. Il controllo di flusso è implementato spedendo dei frame speciali di pausa.
 \subsubsection{10-gigabit Ethernet}
+Viene usata all'interno dei datacenter e nelle centrali di commutazione, per collegare router di fascia alta, switch e server. I collegamenti a lunga distanza (che collegano centrali che gestiscono intere MAN) usano fibra ottica, quelli a breve cavi di rame o fibra.
+10-gigabit Ethernet supporta solo full-duplex. \\
+Le versioni di 10-gigabit Ethernet inviano un flusso sequenziale di dati prodotto mischiando i bit e poi applicando una codifica 64B/66B.
+\begin{enumerate}
+\item 10GBase-SR: fibra ottica, lunghezza max segmento: 300m, fibra multimodale.
+\item 10GB
+\end{enumerate}
+
 \subsubsection{Retrospettiva su Ethernet}
 
 

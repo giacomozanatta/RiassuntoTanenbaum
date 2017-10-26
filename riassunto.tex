@@ -835,5 +835,133 @@ Piccole variazioni del carico del canale possono ridurre le sue prestazioni.\\
 Abbiamo detto che con ALOHA slotted il massimo utilizzo del canale è di 1/e.\\
 Per fare meglio possiamo usare protocolli con rilevamento della portante (trasmissione), che permettono di controllare il canale per vedere se è occupato.\\
 \paragraph{CSMA persistente e non persistente}
+\begin{enumerate}
+\item CSMA 1-persistente: quando una stazione deve trasmettere, ascolta il canale. Se il canale è libero trasmette, se è occupato aspetta finchè non si libera. Problema quando ci sono 2 stazioni che attendono, oppure se inviano simultaneamente. Si chiama 1 perchè la stazione trasmette con probabilità 1 quando il canale è libero. \\
+Il ritardo di propagazione incide sulle collisioni. \\
+Questo protocollo ha prestazioni migliori di ALOHA puro.
+\item CSMA non persistente: stazione attende un intervallo di tempo casuale prima di trasmettere se il canale non è libero. Se è libero invece trasmette. (allunga i ritardi).
+\item CSMA p-persistente: si applica ai canali divisi ad intervalli. Ogni stazione controlla il canale. Se è libero, trasmette subito con probabilità p, e rimanda la trasmissione all'intervallo successivo con probabilità q = 1-p. Se anche il prossimo intervallo è libero, si itera il procedimento. Se lo slot non è libero, la stazione attende un tempo casuale.
+\end{enumerate}
 \paragraph{CSMA con rilevamento delle collisioni}
+Un miglioramente consiste nel rilevare le collisioni, e interrompere la trasmissione anzichè portarla a termine. Si risparmia tempo e banda.
+\\CSMA/CS (CSMA with Collision Detection). L'HW della stazione ascolta il canale durante la trasmissione. Se il segnale letto è diverso da quello inviato, si è verificata una collisione.Implica che il segnale non debba essere molto piccolo rispetto a quello inviato, e deve essere scelta una corretta modulazione.\\
+Il tempo minimo per rilevare una collisione è pari al tempo impiegato dal segnale per propagarsi da una stazione all'altra.
+\subsubsection{Protocolli senza collisione}
+Con CSMA/CD non ci sono collisioni se una stazione ha acquisito il canale. Possono però verificarsi in fase di contesa del canale. Le collisioni riducono l'ampiezza di banda, e rendono il tempo di trasmissione di un frame variabile. \\
+Supponiamo che ci siano N stazioni, ognuna associata ad un indirizzo (da 0 a N-1).
+\paragraph{Protocollo a mappa di bit} Ogni periodo di contesa è composta da N slot. \\
+Se la stazione N deve inviare un frame, trasmette un bit 1 durante l'intervallo N-1. Ogni slot è associato ad una stazione. \\
+Una volta trascorsi tutti gli N slot del periodo di contesa, ogni stazione sa chi deve trasmettere e si procede in ordine.\\
+Protocolli di questo tipo si chiamano protocolli a prenotazione. \\
+La media di attesa di accesso agli slot è N.
+A basso carico, l'efficenza è pari a d/(d+N), dove d è la quantità di dati per frame, e N è il numero di bit per il controllo (N per frame).\\ Con un carico elevato, d/(d+1). \\ Il ritardo medio per un frame è pari a (N-1)d+N + tempo di accomodamento dentro la stazione.
+\paragraph{Protocolli token passing} Viene passato un breve messaggio chiamato token (gettone) da una stazione alla successiva in un ordine predefinito. Il token rappresenta il permesso per inviare dati: chi ha il frame può comunicare.\\
+Per stabilire l'ordine delle stazioni è usata la topologia della rete: le stazioni sono collegate a formare un anello, che può essere anche virtuale.
+\paragraph{Protocolli binary countdown} Per i protocolli precedenti, è necessario 1 bit di controllo per stazione. Sono poco adatti con reti grandi. \\
+Il protocollo binary countdown cerca di risolvere questo problema: vengono usati indirizzi binari per ogni stazione, e un canale combina le trasmissioni. Una stazione che vuole usare il canale, comunica in broadcast il proprio indirizzo bit per bit partendo da quello più significativo. I bit che occupano la stessa posizione negli indirizzi di stazioni diverse vengono spediti contemporaneamente. Si applica quindi una regola di arbitraffio: la stazione rinuncia non appena si accorge che una posizione di bit di ordine elevato che nel proprio indirizzo è uguale a 0 è stata cambiata in 1.\\
+Le stazioni con un indirizzo più alto hanno più priorità.\\
+L'efficenza del canale è pari a d/(d+$log_2 N$).
+\subsubsection{Protocolli a contesa limitata} 
+Con carico leggere la contesa è preferibile. Con ampio carico, invece, è preferibile usare metodi senza collisioni.\\
+I protocolli a contesa sono simmetrici, ossia ogni stazione tenta di acquisire il canale con una probabilitè p uguale per tutte. Se assegnamo ad ogni stazione una differente probabilità, le prestazioni potrebbero aumentare. \\
+Con un protocollo simmetrico, se ci sono k stazioni, la probabilità che una stazione durante uno slot è la probabilità che una stazione trasmetta con probabilità p e che tutte le k-1 stazioni non lo faccino. Il valore ottimo di p è 1/K. Quindi: (pr[successo con p ottimo]):
+\begin{equation}
+Pr = ((\frac{k-1}{k})^{k-1}
+\end{equation}
+Se il numero di stazioni è basso, le possibilità di successo sono buone, ma più stazioni ci sono, più si tende a 1/e.
+\paragraph{Protocollo adaptive tree walk}
+Immaginiamo le stazioni come le foglie di una struttura ad albero. Nel primo slot che segue una trasmissione senza collisioni (slot 0), tutte le stazioni possono comunicare. Se una ci riesce ok. Se avvengono collisioni, durante il prossimo intervallo possono comunicare solo le stazioni sotto il nodo 2. Se ci riescono, allora il prossimo intervallo sarà riservato alle stazioni sotto il nodo 3. E così via.
+\subsubsection{Protocolli per LAN wireless}
+Le reti wireless non sono in grado di inviduare una collisione mentre sta avvenendo. Una volta accaduti, si rilelvano con ACK.
+Per progettare protocolli per LAN wireless, bisogna tenere conto del problema del terminale nascosto (una stazione non è in grado di rilevare i concorrenti per il mezzo di trasmissione a causa della distanza), e del terminale esposto.\\
+Per le LAN wireless si utilizza il protocollo MACA (multiple access collision detection).\\ L'idea base è: trasmettitore chiede al ricevente di trasmettere un piccolo frame (A invia a B un RTS (request to send), B invia CTS (clear to send), A ricevuto CTS inizia la trasmissione). Le stazioni che si trovano nelle vicinanze che rilevano questa trasmissione evitano di trasmettere dati. \\
+Le stazioni che rilevano RTS sono vicine ad A, e stanno zitte. \\
+Se due stazoni invece decidono di inviare un pacchetto RTS contemporaneamente, si verificherà un errore, e i pacchetti andranno persi. Se le 2 stazioni non ricevono il CTS entro un certo periodo di tempo, allora aspetteranno un tempo casuale prima di ritrasmettere il pacchetto RTS.
+\subsection{Ethernet}
+Esistono 2 tipi di Ethernet:
+\begin{enumerate}
+\item Ethernet classica: risolve il problema dell'accesso multiplo usando le tecniche studiate qui di seguito (tassi di trasmissione tra i 3 e 10 Mbps)
+\item Ethernet commutata: dispositivi (commutatori) utilizzati per connettere diversi computer (100, 1000 e 10.000 Mbps).
+\end{enumerate}
+\subsubsection{Livello fisico di Ethernet classica}
+Uno standard di Ethernet a 10 Mbps venne proposto nel 1978 (Standard DIX). Nel 1983 divenne IEEE 802.3. La prima archiettura era la Thick Ethernet: un unico cavo permetteva di collegare dei computer tra loro.\\
+Successivamente, venne sviluppata Thin Ethernet, più flessibile ed utilizzava collettori BNC. Era più economica, ma limitata a 185 metri per segmento. Per collegare più segmenti, vengono utilizzati dei repeater, dispositivi di livello fisico che riceve, amplifica e ritrasmette il segnale in entrambe le direzioni. \\
+Le informazioni sono spedite con codifica Manchester.  Un Ethernet può contenere divevrsi segmenti di cavi e diversi repeater, ma non ci possono essere due transceiver a più di 2,5 Km, per poter permettere al protocollo MAC di lavorare in modo corretto.
+\subsubsection{Protocollo sottolivello MAC di Ethernet classica}
+Il formato dei frame è il seguente:
+\begin{enumerate}
+\item Preambolo (8 byte), composto da 7 byte pari a 0101010, e l'ultimo uguale a 0101011 (gli ultimi 2 bit sono chiamati delimitatore di inizio frame). \\
+Manchester con questa codifica genera un'onda quadra in grado di permettere al clock del ricevente di sincronizzarsi con quello del trasmittente. \\
+\item Indirizzo destinazione (6 byte), se il primo bit è un 1 identifica un gruppo. Se l'indirizzo è composto da tutti 1 allora è un indirizzo di broadcast.
+\item Indirizzo d'origine (6 byte), 
+\item Type (Lenght se IEEE 802.3) (2 byte), Ethernet utilizza Type per comunicare che cosa fare con il frame (specifica . 802.3 utilizza questo campo per indicare la lunghezza del frame. 
+\item Dati (0...1500 byte), limitato perchè un transceiver aveva bisogno di salvare il frame in RAM. 
+\item Pad (0...46 byte)
+\item Checksum (4 byte), CRC a 32 bit. 
+\end{enumerate}
+Ethernet chiede che i frame siano lunghi almeno 64 byte. Se i dati sono minori di 46 byte, viene usato il campo Pad per compensare.
+\paragraph{CSMA/CD con backoff esponenziale binario}
+Ethernet classica usa CSMA/CD 1-persistente. \\
+Per determinare l'intervallo di tempo casuale di attesa prima della ritrasmissione dopo una collisione, il tempo viene diviso in intervalli discreti la cui lunghezza è uguale al tempo di propagazione di andata e di ritorno sul mezzo di trasmissione nel caso peggiore.\\
+Dopo una collisione la stazione attende casualmente 1 o 0 slot prima di ritrasmettere. Se due stazioni scelgono lo stesso numero avverrà una nuova collisione e si sceglierà tra 0, 1, 2 o 3 slot. Se avviene una terza collisione il numero prossimo di intervalli è compreso tra 0 e $2^3 -1$. Dopo 16 collisioni di seguito viene dato un errore. \\
+Questo algoritmo è chiamato backoff esponenziale binario, e permette di adattarsi dinamicamente al numero di stazioni che tentano di trasmettere. Se non ci sono collisioni si suppone che la comunicazione sia andata a buon fine (non viene fornita una conferma di ricezione). \\ Usata per mezzi a basso tasso d'errore (cavi di rame o fibra ottica). Per mezzi wireless viene usato un ACK.
+\subsubsection{Prestazioni di Ethernet}
+Supponiamo una probabilità costante di ritrasmissione ad ogni slot. Se ogni stazione trasmette in un intervallo con contesa con probabilità p, allora la probabilità A che qualche stazione acquisista il controllo del canale in quell'intervallo è:
+\begin{equation}
+ A = kp(1-p)^{k-1}
+\end{equation}
+Il numero medio di slot per contesa è:
+\begin{equation}
+ A = \sum_{i=0}^\infty jA(1-A)^{j-1}=\frac{1}{A}
+\end{equation}
+Se il frame medio impiega P secondi per essere trasmesso, quando molte stazioni hanno frame da inviare si ha:
+\begin{equation}
+ Efficenza = \frac{P}{P+2\pi/A}
+\end{equation}
+Più il cavo è lungo, più tempo si ha di contesa. L'efficenza può essere vista anche con un'altra formula: F = lunghezza di frame, B = banda di rete, L = lunghezza del cavo, c = velocità di propagazione del segnale in codizioni ottime di e slot di contesa per frame.
+\begin{equation} 
+ Efficenza = \frac{1}{1+2BLe/cF}
+\end{equation}
+Quindi aumentando la banda della rete o la distanza, l'efficenza diminuisce. 
+\subsubsection{Ethernet commutata}
+Per gestire il carico crescente, viene usato uno switch (commutatore) che contiene una scheda HW  di collegamento tra le intefacce di rete o backpane che connette tutte le porte. Lo switch è in grado di capire a che porta inoltrare un frame. In uno switch inoltre ogni porta ha un proprio dominio di collisione separato.\\
+Lo switch deve avere un buffer, in cui possa accodare un frame in ingresso se c'è giù un frame in uscita nella porta scelta.\\
+La maggior parte delle interfacce di rete supporta la modalità promisqua, in cui un computer raccoglie tutti i frame, non solo quelli interessati. Uno switch evita questo inconveniente e migliora la sicurezza.\\
+Alcune porte nello switch vengono usate come concentratori, in cui è possibile collegare degli hub.
+\subsubsection{Fast Ethernet}
+Fast Ethernet (802.3u) fu approvato dall'IEEE nel 1995. Vengono mantenuti tutti i vecchi formati di frame per calcoli, interfacce e regole procedurali. 
+Ci sono diverse cablature di fast Ethernet:
+\begin{enumerate}
+\item 100Base-T4, doppino, lunghezza max segmento: 100m, UTP di cat. 3
+\item 100Base-TX, doppino, lunghezza max segmento: 100m, Full Duplex a 100 Mbps (UTP cat. 5)
+\item 100Base-FX, fibra ottica, lunghezza max segmento: 2000m, Full Duplex a 100 Mbps (distanze elevate).	
+\end{enumerate}
+\subsubsection{Gigabit Ethernet}
+802.3ab. Come fast Ethernet, le comunicazioni sono punto a punto.
+\subsubsection{10-gigabit Ethernet}
+\subsubsection{Retrospettiva su Ethernet}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \end{document}

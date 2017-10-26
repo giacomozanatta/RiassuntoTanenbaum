@@ -955,10 +955,58 @@ Viene usata all'interno dei datacenter e nelle centrali di commutazione, per col
 Le versioni di 10-gigabit Ethernet inviano un flusso sequenziale di dati prodotto mischiando i bit e poi applicando una codifica 64B/66B.
 \begin{enumerate}
 \item 10GBase-SR: fibra ottica, lunghezza max segmento: 300m, fibra multimodale.
-\item 10GB
+\item 10GBase-LR: fibra ottica, lunghezza max segmento: 10km, fibra monomodale.
+\item 10GBase-ER: fibra ottica, lunghezza max segmento: 40km, fibra monomodale.
+\item 10GBase-CX4: 4 coppie di biassiali, lunghezza max segmento: 15m, rame biassale.
+\item 10GBase-T: 4 coppie di UTP, 100m, UTP di Cat. 6a.
 \end{enumerate}
 
-\subsubsection{Retrospettiva su Ethernet}
+\subsection{Commutazione a livello data link}
+è possibile unire le LAN per crearne una più grande usando dei bridge (o switch).
+\subsubsection{Vari utilizzi dei bridge}
+Perchè usare i bridge? \\
+Per dividere una LAN logica in più LAN fisiche,vper poter avere reti più grandi, per poter unire i computer di un ufficio.
+I bridge ideali dovrebbero essere trasparenti. 
+\subsubsection{Bridge con apprendimento}
+Ogni bridge opera in modalità promiscua (accetta ogni frame trasmesso dalle stazioni collegate ad ognuna delle sue porte). Il bridge ha il compito di decidere se inoltrare o scartare ogni frame, e su che porta farlo uscire.
+\\ Un modo per fare questo, è tenere su una tabella hash dentro il bridge tutte le possibili destinazioni e le porte ad esse associate. \\
+Al primo collegamento del bridge, tutte le porte sono vuote. I bridge devono usare un algoritmo di flooding per trovare le varie destinazioni: ogni frame in entrata per una destinazione sconosciuta viene fatto passare su tutte le porte
+su cui il bridge è connesso (ad eccezione della porta entrante). Se una destinazione è nota, il frame viene indirizzato subito, e non inoltrato a tutte le porte.\\
+I bridge usano l'algoritmo di backward learning. \\
+Per gestire topologie dinamiche, ogni volta che un elemento viene aggiunto alla tabella viene anche calcolato il tempo di arrivo del frame, che viene aggiornato ogni volta che arriva un frame la cui sorgente è già in tabella.\\
+Un processo interno al bridge inoltre scandisce la tabella di hash ed elimina tutti gli elementi più vecchi di qualche minuto. \\
+L'algoritmo di routing utilizzato è il seguente:
+\begin{enumerate}
+\item scarta il frame se la porta per raggiungere la destinazione è la stessa della porta sorgente.
+\item inoltra il frame sulla porta di destinazione se la porta per raggiungere il frame non è la stessa della porta di destinazione.
+\item utilizza il flooding ed inoltra il frame a tutte le porte tranne la porta sorgente se la porta di destinazione è sconosciuta.
+\end{enumerate
+Questo algoritmo è implementato con chip VLSI, che gestiscono la tabella in pochi millisecondi. \\
+Inoltre è possibile iniziare la decisione di inoltro del frame appena arriva l'indirizzo MAC: questo riduce la latenza (cut-through switching).
+\subsubsection{Bridge con spanning tree}
+Possono esserci collegamenti ridondanti tra i bridge, che creano cicli. Questo per assicurarsi che se un collegamento va giù, la rete non verrebbe divisa in 2. \\
+Il problema però sono i cicli, viene quindi usato un algoritmo per ricavare un albero di copertura minima in grado di raggiungere ogni bridge.\\
+Alcuni collegamenti quindi possono venire ignorati per poter permettere di costruire una topologia virtuale esente da cicli.\\
+è possibile vedere la topologia di questo tipo di rete come un grafo. Questo grafo può essere ridotto ad uno spanning tree. Usando uno spanning tree c'è sempre un collegamento tra ogni coppia di stazioni.\\
+Per generare lo spanning tree viene usato un algoritmo distribuito: ogni bridge trasmette un messaggio di configurazione da tutte le sue porte ai suoi vicini, ed elabora i messaggi che riceve dai suoi vicini.
+Per scegliere il bridge radice, viene sceto quello con l'identificatore MAC più basso. Gli indirizzi MAC vengono spediti nel messaggio di configurazione. 
+Per trovare i percorsi minimi, i bridge includono la loro distanza dalla radice nei messaggi di configurazione. Ogni bridge ricorda il percorso più breve individuato verso la radice e spegnendo le porte che non fanno parte del tragitto più breve.
+L'algoritmo dello Spanning Tree è stato standardizzato come IEEE 802.1D.
+
+\subsubsection{Repeater, hub, switch, router e gateway}
+\begin{enumerate}
+\item Repeater: si trovano nel livello fisico, sono dispositivi analogici che gestiscono i segnali sui cavi a cui sono collegati. Un segnale che appare sul cavo è ripulito dal rumore, amplificato ed inoltrato sull'altro cavo.\\
+Comprendono solo i simboli che codificano i bit in volt.
+\item Hub: un hub ha diverse linee di input collegate elettronicamente. I frame che arrivano su una di queste linee vengono spediti attraverso tutte le altre. Due frame che arrivano contemporanemente collidono. Tutte le linee operano alla stessa velocità.\\
+Gli hub non amplificano il segnale in ingresso. 
+\item Bridge: i Bridge operano a livello data link, collega 2 o più LAN e ogni porta ha un proprio dominio di collisione. Il bridge può spedire più frame contemporaneamente. 
+è necessario un buffer all'interno del bridge. 
+\item Switch: gli Switch sono bridge moderni, 
+\item Router: un Router opera ad un livello più alto. Quando un pacchetto raggiunge un router, vengono rimosse la sua intestazione e la sua coda, e il pacchetto contenuto nel payload viene passato al software di instradamento. 
+\item Gateway: un Gateway connette due computer che usano protocolli di trasporto orientati alle connessioni differenti. Un gateway a livello applicazione comprende il formato e il contenuto dei dati e possono tradurre i messaggi da un formato ad un altro.
+\end{enumerate}
+\subsubsection{Virtual LAN}
+
 
 
 

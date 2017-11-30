@@ -555,9 +555,9 @@ Alcune funzioni di libreria sono le seguenti:\\
 	void start\_timer(seq\_nr k) & fa partire l'orologio, e abilita l'evento di timeout \\ \hline
 	void stop\_timer(seq\_nr k) & ferma l'orologio, e disabilita l'evento di timeout \\ \hline
 	void start\_ack\_timer(void) & fa partire il timer ausiliario, e abilita ack\_timeout \\ \hline
-		void stop\_ack\_timer(void) & stoppa il timer ausiliario, e disabilita ack\_timeout \\ \hline
-		void enable\_network\_layer(void) & abilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
-		void disable\_network\_layer(void) & disabilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
+	void stop\_ack\_timer(void) & stoppa il timer ausiliario, e disabilita ack\_timeout \\ \hline
+	void enable\_network\_layer(void) & abilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
+	void disable\_network\_layer(void) & disabilita il livello di rete a scatenare eventi net\_layer\_ready \\ \hline
 \end{tabular}
 \subsubsection{Un protocollo simplex utopistico}
 Questo protocollo permette la trasmissione dei dati in una sola direzione. Viene assunto che il canale sia privo di errori, e che la destinazione possa elaborare l'input a velocità infinita. La sorgente invia i dati alla velocità massima.\\
@@ -612,6 +612,8 @@ void receiver1(void){
 	}
 }
 \end{lstlisting}
+
+
 \subsubsection{Protocollo simplex stop-and-wait per un canale soggetto a rumore}
 In questo caso possono verificarsi errori: il pacchetto può venire danneggiato o addirittura perso. \\
 Come procedere? Viene aggiunto un timer, e un metodo per permettere alla destinazione di distinguere i frame che vede per la prima volta. \\
@@ -720,6 +722,8 @@ void protocol4(void){
 	}
 }
 \end{lstlisting}
+
+
 \subsubsection{Un protocollo che usa go-back-n}
 Per permettere alla sorgente di non aspettare l'ACK, è possibile mandare un numero w di frame maggiore di 1. Gli ACK arriveranno per i frame precedenti prima che la finestra si riempi. \\
 Per calcolare l'opportuno w, si calcola la bandwith-delay product (banda (bit/s) del canale * tempo di transito in una direzione). Dividendo questa grandezzza per il numero di bit per frame si ottiene il numero di frame (BD). w deve essere pari a 2BD + 1.\\
@@ -739,6 +743,8 @@ Per evitare che il protocollo si blocchi quando la finestra della sorgente si sa
 Se la destinazione sospetta un errore, viene inviato un NAK (negative ACK), necessario per rispedire il frame.
 \subsection{Esempi di protocolli data link}
 Analizziamo ora protocolli data link su collegamenti punto a punto di Internet. Questo tipo di protocolli è chiamato PPP (Point to Point Protocol).\\
+
+
 \subsubsection{Pacchetti su SONET}
 SONET è il protocollo di liv. fisico usato nei collegamenti in fibra ottica delle WAN.\\
 È necessario disporre di meccanismi di framing che distinguano i pacchetti occasionali dal flusso di bit continuo in cui vengono trasportati. \\
@@ -890,14 +896,14 @@ Le informazioni sono spedite con codifica Manchester.  Un Ethernet può contener
 \subsubsection{Protocollo sottolivello MAC di Ethernet classica}
 Il formato dei frame è il seguente:
 \begin{enumerate}
-\item Preambolo (8 byte), composto da 7 byte pari a 0101010, e l'ultimo uguale a 0101011 (gli ultimi 2 bit sono chiamati delimitatore di inizio frame). \\
-Manchester con questa codifica genera un'onda quadra in grado di permettere al clock del ricevente di sincronizzarsi con quello del trasmittente. \\
-\item Indirizzo destinazione (6 byte), se il primo bit è un 1 identifica un gruppo. Se l'indirizzo è composto da tutti 1 allora è un indirizzo di broadcast.
-\item Indirizzo d'origine (6 byte), 
-\item Type (Lenght se IEEE 802.3) (2 byte), Ethernet utilizza Type per comunicare che cosa fare con il frame (specifica . 802.3 utilizza questo campo per indicare la lunghezza del frame. 
-\item Dati (0...1500 byte), limitato perchè un transceiver aveva bisogno di salvare il frame in RAM. 
-\item Pad (0...46 byte)
-\item Checksum (4 byte), CRC a 32 bit. 
+  \item Preambolo (8 byte), composto da 7 byte pari a 0101010, e l'ultimo uguale a 0101011 (gli ultimi 2 bit sono chiamati delimitatore di inizio frame). \\
+  Manchester con questa codifica genera un'onda quadra in grado di permettere al clock del ricevente di sincronizzarsi con quello del trasmittente. \\
+  \item Indirizzo destinazione (6 byte), se il primo bit è un 1 identifica un gruppo. Se l'indirizzo è composto da tutti 1 allora è un indirizzo di broadcast.
+  \item Indirizzo d'origine (6 byte), 
+  \item Type (Lenght se IEEE 802.3) (2 byte), Ethernet utilizza Type per comunicare che cosa fare con il frame (specifica . 802.3 utilizza questo campo per indicare la lunghezza del frame. 
+  \item Dati (0...1500 byte), limitato perchè un transceiver aveva bisogno di salvare il frame in RAM. 
+  \item Pad (0...46 byte)
+  \item Checksum (4 byte), CRC a 32 bit. 
 \end{enumerate}
 Ethernet chiede che i frame siano lunghi almeno 64 byte. Se i dati sono minori di 46 byte, viene usato il campo Pad per compensare.
 \paragraph{CSMA/CD con backoff esponenziale binario}
@@ -905,7 +911,7 @@ Ethernet classica usa CSMA/CD 1-persistente. \\
 Per determinare l'intervallo di tempo casuale di attesa prima della ritrasmissione dopo una collisione, il tempo viene diviso in intervalli discreti la cui lunghezza è uguale al tempo di propagazione di andata e di ritorno sul mezzo di trasmissione nel caso peggiore.\\
 Dopo una collisione la stazione attende casualmente 1 o 0 slot prima di ritrasmettere. Se due stazioni scelgono lo stesso numero avverrà una nuova collisione e si sceglierà tra 0, 1, 2 o 3 slot. Se avviene una terza collisione il numero prossimo di intervalli è compreso tra 0 e $2^3 -1$. Dopo 16 collisioni di seguito viene dato un errore. \\
 Questo algoritmo è chiamato backoff esponenziale binario, e permette di adattarsi dinamicamente al numero di stazioni che tentano di trasmettere. Se non ci sono collisioni si suppone che la comunicazione sia andata a buon fine (non viene fornita una conferma di ricezione). \\ Usata per mezzi a basso tasso d'errore (cavi di rame o fibra ottica). Per mezzi wireless viene usato un ACK.
-\subsubsection{Prestazioni di EthernetSupponiamo una probabilità costante di ritrasmissione ad ogni slot. Se ogni stazione trasmette in un intervallo con contesa con probabilità p, allora la probabilità A che qualche stazione acquisista il controllo del canale in quell'intervallo è:
+\subsubsection{Prestazioni di Ethernet} Supponiamo una probabilità costante di ritrasmissione ad ogni slot. Se ogni stazione trasmette in un intervallo con contesa con probabilità p, allora la probabilità A che qualche stazione acquisista il controllo del canale in quell'intervallo è:
 \begin{equation}
  A = kp(1-p)^{k-1}
 \end{equation}
@@ -980,7 +986,7 @@ L'algoritmo di routing utilizzato è il seguente:
 \item scarta il frame se la porta per raggiungere la destinazione è la stessa della porta sorgente.
 \item inoltra il frame sulla porta di destinazione se la porta per raggiungere il frame non è la stessa della porta di destinazione.
 \item utilizza il flooding ed inoltra il frame a tutte le porte tranne la porta sorgente se la porta di destinazione è sconosciuta.
-\end{enumerate
+\end{enumerate}
 Questo algoritmo è implementato con chip VLSI, che gestiscono la tabella in pochi millisecondi. \\
 Inoltre è possibile iniziare la decisione di inoltro del frame appena arriva l'indirizzo MAC: questo riduce la latenza (cut-through switching).
 \subsubsection{Bridge con spanning tree}
@@ -1007,17 +1013,130 @@ Gli hub non amplificano il segnale in ingresso.
 \end{enumerate}
 \subsubsection{Virtual LAN}
 
-
-
-
-
-
-
-
-
-
-
-
+\newpage
+\section{Il livello di rete}
+Questo livello si occupa del trasporto dei pacchetti lungo tutto il percorso della rete. È il livello più basso che si occupa della trasmissione punto a punto. \\
+Il livello di rete deve conoscere la topologia della rete di comunicazione, e scegliere i percorsi appropriati.
+\subsection{Problematiche nella progettazione del livello di rete}
+\subsubsection{Commutazione di pacchetto store-and-forward}
+In questo livello i componenti principale sono le apparecchiature ISP e i dispositivi degli utenti. Un host che vuole trasmettere invia un pacchetto nel router più vicino, oppure mediante un collegamento punto a punto con l'operatore di telecomunicazionei. Il pacchetto viene memorizzato finchè non è completamente arrivato. A questo punto, dopo aver verificato il checksum, viene inviato al router successivo della rete e così via fino a destinazione (meccanismo store-and-forward).
+\subsubsection{Servizi forniti al livello di trasporto}
+I servizi del livello rete vengono progettati tenendo conto:
+\begin{enumerate}
+    \item che non devono essere legati alla tecnologia dei router
+    \item che il livello di trasporto non deve conoscere dettagli tipo numero, tipo, topologia dei router
+    \item che gli indirizzi di rete dovrebbero utilizzare uno schema di numerazione uniforme.
+\end{enumerate}
+Il livello di trasporto offre servizi orientati alla connessione e servizi connectionless.
+\subsubsection{Implementazione del servizio non orientato alla connessione}
+In questo contesto i pacchetti sono chiamati datagram e la rete rete datagram. \\
+Il livello di rete si occupa di suddividere il pacchetto ricevuto dal livello di trasporto in n parti, e inviare un pacchetto dopo l'altro ad un router usando un protocollo punto-a-punto (PPP). \\
+Ogni router possiede una tabella interna, che indica dove devono essere inviati i pacchetti diretti a ogni possibile destinazione. Ogni voce è composta da una coppia di valori (destinazione, linea da usare). \\
+Vengono usate solo linee dirette.\\
+I router controllano questa tabella per decidere dove inviare il messaggio.\\
+I router implementano algoritmi di routing, che gestiscono le tabelle e prendono decisioni di instradamento.\\
+Un esempio di protocollo connectionless più diffuso è il protocollo IP.
+\subsubsection{Implementazione del servizio orientato alla connessione}
+In questo caso una rete è a circuito virtuale. Si stabilisce un percorso all'inizio della connessione, e quel percorso viene usato per tutti i pacchetti di quella connessione. Il circuito virtuale viene rilasciato al momento del rilascio della connessione. \\
+Ogni pacchetto contiene un identificatore che permette di indicare il circuito virtuale di appartenenza.\\
+Un esempio è MPLS, trasparente agli utenti ma utilizzato dagli ISP per garantire la QOS.
+\subsubsection{Confronto tra reti a circuito virtuale e reti datagram}
+I circuiti virtuali rihiedono un tempo e risorse per la fase di configurazione, ma poi risulta facile capire dove instradare i pacchetti (basta leggere l'identificatore di circuito per trovare la prossima destinazione). In una rete datagram non viene richiesta una configurazione (meno tempo e meno risorse sprecate), ma è più difficile trovare la destinazione.\\
+Inoltre gli indirizzi di reti datagram sono più lunghi quindi per piccoli pacchetti datagram c'è molto overhead. \\
+Reti a circuito virtuale utilizzano meno memoria dei router, in quanto nelle tabelle basta memorizzare una sola voce per circuito virtuale, mentre per le reti datagram viene memorizzata una voce per ogni destinazione. \\
+I circuiti virtuali garantiscono QOS e permettono di evitare congestioni all'interno della rete (le risorse possono essere rilasciate in anticipo e sono sempre disponibili se si è stabilita una connessione). Con le reti datagram tutto questo risulta difficile.\\
+I circuiti virtuali però hanno un problema di vulnerabilità. Se un router ha un problema HW o SW tutti i circuiti virtuali che passano da lui devono essere terminati. \\
+Le reti datagram permettono di bilanciare il carico e il traffico della rete.\\
+\subsection{Algoritmi di routing}
+Un algoritmo di routing è implementato in un processo di livello di rete e permettono di scegliere lungo quale linea in uscita vanno inoltrati i pacchetti in arrivo. \\
+È bene distinguere tra
+\begin{enumerate}
+    \item forwarding: processo che gestisce un pacchetto in arrivo, cercando in una tabella la linea di trasmissione più adatta. 
+    \item routing: processo che riempie e aggiorna le tabelle di routing.
+\end{enumerate}
+Se la rete è datagram, allora la scelta della linea viene eseguita per ogni pacchetto in arrivo. Se è un circuito virtuale, le decisioni vengono prese allo stabilirsi della connessione. \\
+Gli algoritmi di routing si dividono in:
+\begin{enumerate}
+    \item Algoritmi non adattivi: non basano le proprie decisioni su misure o stime del traffico e della topologia corrente. Il percorso tra I e J, generici router, viene calcolato in anticipo (routing statico).
+    \item Algoritmi adattivi: modificano le decisioni in base a diversi fattori (topologia, traffico) e si adattano alla rete con il tempo(routing dinamico)
+\end{enumerate}
+\subsubsection{Principio di ottimalità}
+Il principio di ottimalità afferma che se il router J si trova sul percorso ottimale tra I e K, allora il percorso ottimale tra J e K segue la stessa sequenza di router.
+La serie di percorsi ottimali che collegano tutte le sorgenti ad una data destinazione forma una struttura ad albero, dove il nodo principale è la destinazione (sink tree), dove la distanza è calcolata in base al numero di salti.\\
+UN DAG è un grafo diretto aciclico, che contiene tutti i percorsi minimi (è una unione di tutti i possibili sink tree di un nodo.\\ 
+\subsubsection{Algoritmo di cammino minimo}
+Per scegliere un percorso tra una coppia di router, l'algoritmo deve trovare il cammino minimo che collega i due nodi del grafo.\\
+L'algoritmo di Dijkstra trova un percorso minimo tra una sorgente e tutte le destinazioni della rete. 
+\subsubsection{Flooding}
+Flooding (inondazione) è una tecnica che consiste di inviare un pacchetto a tutte le linee in uscita, tranne a quella da cui proviene. \\
+Ovviamente questa tecnica genera un numero grandissimo di pacchetti, quindi è necessario usare tecniche avanzate per migliorarla.\\
+È possibile utilizzare un contatore di salti, in modo tale che quando questo contatore raggiunge lo zero il pacchetto viene scartato. Il valore del contatore viene settato alla lunghezza del percorso tra sorgente e destinazione (oppure al diametro della rete) e viene decrementato ad ogni hop.\\
+I router potrebbero ricevere pacchetti duplicati, quindi viene inserito un contatore di sequenza all'interno di ogni pacchetto. I router accettano solo pacchetti con una sequenza più alta da quella destinazione.\\
+Il flooding garantisce che effettivamente un pacchetto venga inviato e ricevuto, in quanto trova sempre una strada. È usato per connessioni broadcast, in quanto un pacchetto viene consegnato a tutti i nodi della rete. \\
+È un aloritmo robusto, e sceglie sempre il percorso migliore.
+\subsubsection{Routing basato su vettore delle distanze}
+Ogni router conserva una tabella, che definisce la distanza minima conosciuta per ogni destinazione e il collegamento che conduce a quella destinazione.\\
+Le tabelle vengono aggiornate scambiando informazioni con i router vicini. È l'algoritmo di Bellman-Ford.\\
+Una voce della tabella identifica un router all'interno della rete ed è composta da 2 parti: linea di trasmissione da usare, stima del tempo o della distanza associata a quella destinazione.\\
+Per trovare il ritardo di propagazione tra 2 router vengono usati particolari pacchetti chiamati ECHO, contenenti data e ora di trasmissione.
+\paragraph{Il problema del conteggio all'infinito}
+L'assestamento dei percorsi verso la configurazione dei cammini ottimi è chiamato convergenza.\\
+Il routing basato su vettori delle distanze converge molto lentamente, ed è possibili avere ritardi infiniti. \\
+Il funzionamento di questo algoritmo di routing si basa sullo scambio dei vettori con i router vicini. \\
+È meglio rappresentare l'infinito come valore corrispondente al percorso più lungo all'interno della rete.\\
+Quando X dice a Y che ha un percorso che punta da qualche parte, Y non può sapere se fa parte di quel percorso.\\
+Può avvenire un count to infinity quando viene cambiata la topologia della rete.
+\subsubsection{Routing basato sullo stato dei collegamenti}
+L'idea base di questo tipo di routing è la seguente:
+\begin{enumerate}
+    \item scoprire i propri vicini e i relativi indirizzi di rete
+    \item misurare la distanza o la metrica di costo di ogni vicino
+    \item costruire un pacchetto contenente tutte le informazioni raccolte
+    \item inviare tale pacchetto a tutti gli altri router e ricevere i loro pacchetti
+    \item elaborare il percorso più breve verso tutti gli altri router
+\end{enumerate}
+\paragraph{Scoperta dei vicini}
+Il router cerca i vicini inviando un pacchetto HELLO su ogni linea punto a punto. \\
+Un router riponde al pacchetto HELLO con il proprio nome (globalmente unico).\\
+Una LAN broadcast in questo caso viene modellata inserendo un designated router che permette di collegare sottoreti della LAN tra loro.
+\paragraph{Misurazione del costo dei collegamenti}
+Per calcolare i cammini minimi su usa l'algoritmo link-state-routing. Ogni collegamento deve avere un costo. Per favorire i cammini con collegamenti corti, nel costo viene inserito anche il ritardo, calcolato inviando speciali pacchetti chiamati ECHO (misurando (tempo andata + tempo ritorno) / 2).
+\paragraph{Costruzione dei pacchetti che contengono lo stato dei collegamenti}
+Nel pacchetto viene salvato (in ordine): identità del trasmettitore, numero del pacchetto, Age del pacchetto, lista dei vicini. \\
+I pacchetti che contengono le informazioni sullo stato dei colelgamenti vengono costruti periodicamente oppure all'avvenire di un evento significativo (ad esempio si interrompe una linea o un vicino si spegne) \\
+\paragraph{Distribuzione dei pacchetti che contengono lo stato dei collegamenti}
+Per distribuire questi pacchetti viene usato il flooding. Ogni pacchetto ha un numero di sequenza, incrementato per ogni nuovo pacchetto inviato. \\
+I router tengono traccia delle coppie (router, numero sequenza) e confronta questi dati con quelli arrivati da un pacchetto: se il numero di sequenza è maggiore, allora il pacchetto viene floodato. Se è minore o uguale, viene scartato.\\
+Alcuni difetti: i numeri di sequenza ripetitivi possono generare confusione (infatti vengono usati numeri di 32 bit),quando un router si blocca perde traccia dei suoi numeri di sequenza, possono verificarsi errori di trasmissione sul numero di sequenza.\\
+L'età di un pacchetto viene decrementata di 1 ogni secondo. Quando raggiunge lo 0, le informazioni di quel router vengono scartate, il campo Age viene anche decrementato durante il flooding per evitare inondazioni di pacchetti.\\
+Tutti i pacchetti che contengono informazioni sullo stato non vengono subito accodati per la trasmissione, ma parcheggiati in una zona d'attesa per un breve periodo. Se durante questo periodo arrivano altri pacchetti il router confronta i numeri di sequenza e tiene solo il pacchetto con il numero più alto. Tutti i pacchetti contenente informazioni sullo stato ricevono un ACK.\\
+\paragraph{Calcolo dei nuovi percorsi}
+Dopo aver ricevuto tutti i pacchetti di stato, i router creano il proprio grafo della rete. Ogni router esegue Dijsktra sul suo grafo per trovare i cammini minimi per raggiungere ogni router. \\
+I risultati vengono salvati sulle tabelle di routing.\\
+Il link state routing richiede più memoria e tempo di calcolo rispetto al distance vector routing. Con n router ognuno con k vicini, per memorizzare k dati in input serve una memoria di n*k.\\
+Non presenta convergenza lenta.
+Utilizzato dalle reti reali.\\
+Due esempi di protocolli link state sono IS-ISS e OSPF, il quale quest'ultimo fornisce un metodo di flooding per gli aggiornamenti sullo stato dei collegamenti, in modo da raggiungere uno stato stabile. 
+Il problema di questi tipi di algoritmi è che sono influenzabili da problemi hardware e guasti dei router. 
+\subsubsection{Routing gerarchico}
+La dimensione delle tabelle cresce proporzionalmente con la dimensione della rete, e consuma CPU e risorse. Se in memoria non ci stanno più entry. il routing avviene gerarchicamente. \\
+I router sono divisi in regioni: ogni router conosce i router della sua regione e per comunicare con router al di fuori di questa comunica con un router "capo" della regione.\\
+Il numero ottimale di livelli per una rete di N router è uguale a ln(N), per un totale di e*ln(N) voci per router. 
+\subsubsection{Routing broadcast}
+La trasmissione contemporanea di un pacchetto a tutte le destinazioni è chiamata broadcasting. \\
+Esistono diverse implementazioni:
+\begin{enumerate}
+    \item invio tramite flooding: spreco di banda inutile, ogni sorgente deve conoscere tutte le destinazioni.
+    \item multidestination routing: ogni pacchetto contiene una lista delle destinazioni o una mappa di bit che indica le destinazioni desiderate. 
+\end{enumerate}
+Tratteremo del multidestination routing. Un router quando riceve un pacchetto controlla le destinazioni per trovare l'insieme delle linee di trasmissione richieste. 
+\subsubsection{Routing multicast}
+\subsubsection{Routing anycast}
+\subsubsection{Routing per host mobili}
+\subsubsection{Routing nelle reti ad hoc}
+\paragraph{Identificazione dei percorsi}
+\paragraph{Aggiornamento di un percorso}
+\section{Algoritmi per il controllo della congestione}
 
 
 

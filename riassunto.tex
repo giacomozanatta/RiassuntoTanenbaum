@@ -1129,14 +1129,85 @@ Esistono diverse implementazioni:
     \item invio tramite flooding: spreco di banda inutile, ogni sorgente deve conoscere tutte le destinazioni.
     \item multidestination routing: ogni pacchetto contiene una lista delle destinazioni o una mappa di bit che indica le destinazioni desiderate. 
 \end{enumerate}
-Tratteremo del multidestination routing. Un router quando riceve un pacchetto controlla le destinazioni per trovare l'insieme delle linee di trasmissione richieste. 
+Tratteremo del multidestination routing. Un router quando riceve un pacchetto controlla le destinazioni per trovare l'insieme delle linee di trasmissione richieste.  Genera una nuova copia del pacchetto per ogni linea di output e include in ogni pacchetto solo quelle destinazioni che si trovano su quella linea (l'insieme delle destinazioni viene diviso tra le linee di trasmissione).
+Il flooding non si adatta bene alle linee punto a punto, ma potrebbe essere preso in considerazione nel caso della comunicazione broadcast.\\
+Un altro esempio è il reverse path forwarding: quando il router riceve un pacchetto broadcast, verifica se è giunto attraverso la linea che normalmente è utilizzata per inviare pacchetti alla sorgente della trasmissione broadcast.\\
+Se si, allora forse è la prima volta che quel pacchetto arriva in quanto ha scelto la strada migliore, e quindi vengono inoltrate le copie attraverso tutte le linee esclusa quella di input.\\
+Se no, il pacchetto viene scartato, perchè può essere un duplicato.\\
+Il vantaggio del reverse path forwarding è che è semplice da implementare ed efficente. È simile al flooding (trasmette in una direzione solo una volta), e richiede che i router sappiano solo come raggiungere tutte le destinazione e non è necessario memorizzare i numeri di sequenza o la lista di tutte le destinazioni del pacchetto.\\
+Un altro algoritmo fa uso del sink tree del router che ha iniziato la trasmissione. Uno spanning tree è un sottoinsieme di tutti i router ma non contiene cicli. Se ogni router sa quali sue linee appartengono allo spanning tree, allora può copiare un pacchetto broadcast in arrivo su tutte le linee dello spanning tree, esclusa quella in ingresso.\\
+Utilizza eccellentemente la banda, e genera il minor numero di pacchetti possibile.\\
+Il problema è che ogni router deve conoscere uno spanning tree, e non sempre questa informazione è disponibile.
 \subsubsection{Routing multicast}
+Questo tipo di routing permette l'invio di un messaggio ad un gruppo di router. Richiede un metodo per creare e distruggere i gruppi, e identificare i router appartenenti ai gruppi.\\
+Gli schemi multicast sono costruiti sulla base di quelli broadcast, e se il gruppo è denso basta tagliare le connessioni con i router che non fanno parte del gruppo.\\
+Per ridurre lo spanning tree si può operare in 3 modi:
+\begin{enumerate}
+    \item ogni router costruisce il sink tree completo e rimuove i collegamenti verso router non facenti parte del gruppo (usato se i router conosco la topologia completa e se si adotta il link state routing).Viene usato il protocollo MOSPF (Multicast OSPF)
+    \item se si usa il routing con il vettore delle distanze, allora si usa il reverse path forwarding. Ogni volta che un router non facente parte del grupoo riceve un pacchetto multicast, risponde con un pacchetto PRUNE (che vuol dire "non inviarmi più messaggi!"). LO spanning tree viene ridotto in modo ricorsivo. Un protocollo è il DVMRP
+    \item core-based tree: viene scelta una radice per tutti i router, e costruiscono l'albero inviando pacchetti da ogni membro alla radice. Per inviare un pacchetto su un gruppo, un router invia un pacchetto al core (radice) che lo inoltra a tutto l'albero. Può essere inefficente, in base alla posizione del router sorgente nell'albero.\\
+Un vantaggio di usare un albero condiviso è il costo di memorizzazione, molto basso. È necessario possedere un solo albero per gruppo. I router non appartenenti al gruppo non devono svolgere nulla.\\ Un protocollo è il protocollo PIM.
+\end{enumerate}
 \subsubsection{Routing anycast}
+Un pacchetto viene consegnato al membro più vicino del gruppo.\\
+Sull'anycast ci interessa il messaggio e non il nodo sorgente, viene usato come parte del DNS.
 \subsubsection{Routing per host mobili}
+Gli host mobili hanno una home location fissa che non cambia (LAN di appartenenza), e possiedono un indirizzo utilizzabile per determinare la home location. \\
+Il routing per host mobili ha come obiettivo quello di inviare pacchetti ai host mobili utilizzando il loro home address ovunque si trovino.\\
+È possibile usare un modello di adattamento che modifica i percorsi ogni volta che l'host mobile si sposta e di conseguenza la topologia cambia.\\
+Oppure è possibile fornire mobilità sopra il livello rete (cambiando indirizzo di rete se gli host si muovono in una nuova postazione internet).\\
+L'host mobile deve indicare a un host nella LAN di appartenenza dove si trova. Questo host della LAN si chiama home agent, e agisce per nome dell'host mobile. \\ Quando l'host agent sa dove si trova l'host mobile, può inviare a lui i pacchetti.\\
+Ovviamente quando un host mobile cambia rete, deve ottenere un nuovo indirizzo definito come un care of address. Questo permette all'host agent di risalire alla posizione. Viene effettuato un routing triangolare, eseguendo un meccanismo di tunnelling.\\
+Alcuni schemi usano un agente esterno,remoto, ma non è necessario nei sistemi più recenti in quanto gli host mobili agiscono come propri agenti esterni. La locazione temporanea dell'host mobile è disponibile solo a pochi eletti (dispositivo mobile, home agent, mittenti) e in questo modo non bisogna ricalcolare i percorsi.
 \subsubsection{Routing nelle reti ad hoc}
+E se i router sono mobili?\\
+Ogni nodo comunica in modo wireless ed agisce sia da host che da router. \\
+La topologia può cambiare in qualsiasi momento, e i percorsi possono cambiare senza preavviso. \\
+Viene utilizzato l'algoritmo AODV, che tiene conto della banda limitata e della scarsa durata delle batterie dei dispositivi che operano all'interno di questo ambiente.
 \paragraph{Identificazione dei percorsi}
+AODV è un algoritmo a richiesta, ossia determina il percorso migliore ogni volta quando c'è effettivamente bisogno di inviare pacchetti al destinatario.\\
+Due nodi della rete sono collegati se possono comunicare direttamente usando la loro radio.\\
+Ogni nodo può comunicare con tutti quelli dentro la sua copertura.\\
+Per individuare un nodo I, viene inviato un pacchetto ROUTE REQUEST usando il flooding. Quando il nodo I riceve il pacchetto, invia un ROUTE REPLY seguendo il percorso inverso. Ogni nodo intermedio deve memorizzare il suo predecessore, e un contatore dei salti, incrementato ogni volta che riceve una risposta (questo per capire quanto i nodi siano distanti dalla destinazione). Viene usato il campo time to live, decrementato ad ogni salto. Se raggiunge lo 0, il pacchetto viene scartato. Si inizia partendo con time to live pari a 1, e se non si ha risposta il valore viene incrementato e si riprova.
 \paragraph{Aggiornamento di un percorso}
-\section{Algoritmi per il controllo della congestione}
+La topologia può cambiare spontaneamente. Ongi nodo periodicamente trasmette in broadcast un pacchetto HELLO, ed ognuno dei suoi vicini deve rispondere. Se un vicino non risponde, vuol dire che si è spostato, e non può essere raggiunto. Questo metodo permette di eliminare i percorsi che non sono più validi. A questo punto possono usare il meccanismo di scoperta per scopire nuovi percorsi validi. \\
+Per garantire una rapida convergenza, i percorsi includono un numero di sequenza controllato dalla destinazione. Questo numero funziona come un orologio logico, la destinazione lo incrementa ogni volta che invia un nuovo pacchetto ROUTE REPLY. La richiesta sarà trasmessa in broadcast fino a un percorso con un numero di sequenza più alto. I nodi intermedi memorizzano solo i percorsi che hanno un numero di sequenza più alto, o il minor numero di salti per il numero di sequenza corrente. Memorizzano solo i percorsi che sono in uso, e questo porta ad un miglioramento di banda e durata della batteria.\\
+Scoperta e manutenzione dei percorsi vengono condivisi quando questi si sovrappongono per risparmiare risorse.\\
+Se si implementa uno schema GPSR (greedy perimetral stateless routing), se tutti i nodi conoscono la loro posizione geografica l'inoltro ad una destinazione può procedere senza calcolo del percorso andando nella direzione giusta. 
+\subsection{Algoritmi per il controllo della congestione}
+Una congestione è un evento non voluto che causa degrado delle prestazioni, perdita di pacchetti e ritardi. Questo può avvenire quando sono presenti troppi pacchetti all'interno della rete.
+Il livello rete ha  il compito di risolvere queste congestioni.\\
+Per ridurre i problemi di congestione è possibile agire sul carico, riducendo i pacchetti inviati dal livello trasporto.\\
+Quando il numero di pacchetti inviati in rete dagli host è al di sotto della sua capacità di carico, il numero di pacchetti consegnati è proporzionale al numero di inviati. Quando il carico si avvicina alla capacità di carico, alcuni pacchetti vengono persi e si verifica un problema di traffico, e la rete si congestiona. I pacchetti persi consumano parte della capacità di rete.\\
+È possibile che si verifichi un collasso da congestione, nel quale le prestazioni crollano vertiginosamente.\\
+Se la memoria non è sufficente, alcuni pacchetti verranno persi.\\
+Una tecnica per risolvere problemi di congestione consiste nel diminuire il carico o costruire una rete più veloce.\\
+Il controllo della congestione riguarda tutti gli host e tutti i router, e significa garantire che la rete sia in grado di trasportare il traffico immesso.\\
+Il controllo di flusso rigurda solo il traffico tra un singolo trasmittente e un dato ricevente, e cerca di evitare che una sorgente veloce trasmetta una quantità di dati maggiore di quella che il ricevente è in grado di assorbire.\\
+\subsubsection{Approcci al controllo della congestione}
+La presenza di una congestione indica che il carico è maggiore di quello che può essere gestito da una parte del sistema. Esistono due soluzioni: aumentare le risorse o diminuire il carico.\\
+Un modo per evitare una congestione è quello di costruire una rete che si adatti al traffico sopportato. Se si verifica una congestione è possibile aggiungere dinamicamente le risorse (es. deviando il traffico su router di riserva o utilizzare linee dedicate) o acquistando più banda.\\
+Questo metodo è chiamato provisioning.\\
+I percorsi possono essere personalizzati in modo da tenere conto dei cambiamenti che avvengono durante la giornata, in base all'analisi del traffico, modificando i loro pesi in determinate situazioni. \\
+Questo metodo è chiamato traffic-aware routing.\\
+Il controllo di ammissione invece permette di diminuire il traffico in quelle situazioni in cui non è possibile aumentare la capacità della rete. In una rete a circuito virtuale si può rifiutare una connessione se la sua attivazione causa una congestione.\\
+Quando è imminente la congestione la rete può fornire un feedback alle sorgenti causanti la congestione, richiedendo una pausa di trasmissione o il rallentamento.\\
+Le difficoltà sono: identificare la nascita di una congestione, informare la sorgente di rallentare il traffico. \\
+Per il primo problema i router possono monitorare il carico medio, il ritardo di accomodamento o la perdita di pacchetti. Se tali numeri crescono, sta avvenendo una congestione.\\
+Per il secondo problema, è necessario inviare un feedback alle sorgenti. Fornire un feedback tempestivo non è un problema banale, e i router inviano più messaggi quando la rete è congestionata. \\
+Il load shedding permette di eliminare il carico in eccesso, e una buona politica per scegliere quali pacchetti scartare può aiutare a prevenire il collasso.
+\subsubsection{Traffic-aware routing}
+
+\subsubsection{Controllo di ammissione}
+\subsubsection{Limitazione del traffico}
+\subsubsection{Load shedding}
+\subsection{Qualità del servizio}
+\subsubsection{Requisiti delle applicazioni}
+\subsubsection{Traffic shaping}
+
+
+
+
 
 
 
@@ -1151,3 +1222,5 @@ Tratteremo del multidestination routing. Un router quando riceve un pacchetto co
 
 
 \end{document}
+\grid
+\grid
